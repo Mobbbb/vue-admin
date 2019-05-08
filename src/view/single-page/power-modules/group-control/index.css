@@ -1,0 +1,31 @@
+.ant-spin-container{
+    border-bottom: 1px solid #e9e9e9;
+}
+.ant-table-tbody>tr>td,.ant-table-thead>tr>th{
+	font-size: 12px;
+	font-weight: 400;
+    color: #333;
+    margin-bottom: 200px;
+    padding: 15px 18px;
+    box-sizing: border-box;
+}
+.ant-table-thead>tr>th{
+	height: 40px;
+    padding: 0 18px;
+}
+.ant-table.ant-table-stripe table tr:nth-child(2n){
+	background-color: #f8f8f9
+}
+
+
+.ivu-tree-title{
+    font-size: 14px;
+}
+
+
+.remodel-input .ivu-select-input{
+    cursor: text;
+}
+.remodel-input .ivu-select-dropdown{
+    display: none;
+}

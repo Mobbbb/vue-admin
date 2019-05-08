@@ -1,0 +1,12 @@
+.treeData-search-input .ivu-select-input{
+    cursor: text;
+}
+.treeData-search-input .ivu-select-dropdown{
+    display: none;
+}
+.treeData-wrap .ivu-tree-title{
+    font-size: 14px;
+}
+.treeData-wrap .ivu-tree-empty{
+	margin: 7px 0 2px 0;
+}

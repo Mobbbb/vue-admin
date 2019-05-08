@@ -1,0 +1,371 @@
+/**
+ * Created by Sublime
+ * User: chenyinke
+ * Date: 2018/11/20
+ * Time: 13:37  
+ * To cover iview components default style and customized components style
+ */
+
+/*
+* upload-pic组件展示图片用
+*/
+.no-delete-pic .demo-upload-list .demo-upload-list-cover .ivu-icon-ios-trash-outline{
+    display: none;
+}
+
+/*
+* 新增按钮
+*/
+.add-list-btn{
+    width: 300px;
+    height: 32px;
+    color: #a7a5a5;
+    line-height: 32px;
+    border-radius: 4px;
+    text-align: center;
+    border: 1px dashed #dcdee2;
+    transition: border 0.2s ease-in-out, background 0.2s ease-in-out, box-shadow 0.2s ease-in-out, -webkit-box-shadow 0.2s ease-in-out
+}
+.add-list-btn:hover{
+    color: #57a3f3;
+    border-color: #57a3f3;
+    cursor: pointer;
+}
+
+/*
+* 订单管理-详情
+*/
+.order-detail-tab .ivu-tabs-bar .ivu-tabs-nav-container .ivu-tabs-nav-wrap .ivu-tabs-nav-scroll .ivu-tabs-nav .ivu-tabs-tab{
+    margin-right: 0;
+    border: 1px solid #dcdee2;
+    border-bottom: none;
+    padding: 15px 26px 16px 26px;
+}
+.order-detail-tab .ivu-tabs-bar .ivu-tabs-nav-container .ivu-tabs-nav-wrap .ivu-tabs-nav-scroll .ivu-tabs-nav .ivu-tabs-tab-active{
+    background: #f8f8f9;
+}
+.order-detail-tab .ivu-tabs-bar .ivu-tabs-nav-container .ivu-tabs-nav-wrap .ivu-tabs-nav-scroll .ivu-tabs-nav .ivu-tabs-ink-bar {
+    display: none;
+}
+.ivu-tabs-nav-container:focus .ivu-tabs-tab-focused{
+    border-color: #dcdee2 !important;
+}
+
+/*
+* 订单管理-详情-form
+*/
+.display-div .ivu-form-item .ivu-form-item-label{
+    padding: 4px 12px 4px 0;
+    font-weight: bold;
+}
+
+/*
+* 订单管理-详情-card
+*/
+.order-detail-card .ivu-card-body{
+    overflow: hidden;
+}
+
+/**
+ * 数字输入框
+ */
+.no-arrow .ivu-input-number-handler-wrap{
+    display: none;
+}
+
+/**
+ * 用户管理-选择部门组件输入框样式
+ */
+.user-tree .ivu-tree-empty{
+    padding: 10px 0 0 5px;
+}
+.user-remodel-input .ivu-select-dropdown{
+    display: none;
+} 
+.user-remodel-input .ivu-select-selection{
+    border: 1px solid #dcdee2;
+}
+.user-remodel-input .ivu-select-selection > div > input{
+    cursor: text;
+}
+.user-remodel-input .ivu-select-selection:hover{
+    border-color: #57a3f3;
+}
+.ivu-form-item-error .ivu-select-visible .ivu-select-selection{
+    border-color: #57a3f3;
+    box-shadow: 0 0 0 2px rgba(45, 140, 240, 0.2);
+}
+
+
+/**
+ * 展示无边框input
+ */
+.displayInput{
+    display: inline-block;
+    width: 100%;
+    height: 32px;
+    line-height: 32px;
+    padding: 0 7px;
+    font-size: 12px;
+    color: #515a6e;
+}
+
+
+/**
+ * 展示输入框
+ */
+.clickInput{
+    display: inline-block;
+    width: 100%;
+    height: 32px;
+    line-height: 32px;
+    padding: 0 7px;
+    font-size: 12px;
+    border: 1px solid #dcdee2;
+    border-radius: 4px;
+    color: #515a6e;
+    background-color: #fff;
+    cursor: pointer;
+    transition: border 0.2s ease-in-out, background 0.2s ease-in-out, box-shadow 0.2s ease-in-out, -webkit-box-shadow 0.2s ease-in-out;
+    -webkit-transition: border 0.2s ease-in-out, background 0.2s ease-in-out, -webkit-box-shadow 0.2s ease-in-out;
+}
+.clickInput:hover{
+    border-color: #57a3f3;
+}
+
+
+/**
+ * 选中框滚动
+ */
+.config-month .ivu-select-selection{
+    height: 62px;
+    padding: 0 4px;
+    overflow: scroll;
+}
+.config-month .ivu-select-selection div .ivu-select-arrow{
+    display: none;
+}
+.config-month .ivu-select-selection::-webkit-scrollbar{
+    display: none;
+}
+
+
+/**
+ * 模态框
+ */
+.ivu-modal-body{
+    padding: 25px 16px;
+}
+.my-modal-wrap{
+    margin-top: 10px;
+}
+
+
+/**
+ * 起止日期选择(单页)
+ */
+.config-year .ivu-picker-panel-content-right{
+    display: none;
+}
+.config-year .ivu-date-picker-with-range .ivu-picker-panel-body{
+    min-width: 216px;
+}
+.config-year .ivu-picker-panel-icon-btn{
+    display: none;
+}
+.config-year .ivu-date-picker-header span .ivu-date-picker-header-label:first-child{
+    display: none;
+}
+
+
+/**
+ * 输入框带单位
+ */
+.append-input-wrap{
+    display: flex;
+    position: relative;
+    align-items: center;
+}
+.append-input{
+    border-bottom-left-radius: 0 !important;
+    border-top-left-radius: 0 !important;
+    height: 32px;
+    padding: 0 7px;
+    color: #515a6e;
+    text-align: center;
+    background-color: #f8f8f9;
+    border: 1px solid #dcdee2;
+    border-left: 0;
+    border-radius: 4px;
+    line-height: 33px;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+.my-number-input{
+    border-radius: 4px 0 0 4px;
+    box-shadow: none;
+    width: 65px;
+}
+
+
+/**
+ * 穿梭框
+ */
+.my-transfer .ivu-transfer-operation > .ivu-btn:first-child{
+    display: none;
+}
+.my-transfer .ivu-transfer-operation .ivu-btn-small{
+    padding: 6px 11px 6px 15px;
+    border-radius: 4px;
+}
+.my-transfer .ivu-transfer-operation .ivu-btn-small > span{
+    display: flex;
+    align-items: center;
+}
+.my-transfer .ivu-transfer-list-footer{
+    border: none;
+}
+.my-transfer .ivu-transfer-list-body{
+    border-radius: 0 0 6px 6px;
+}
+.my-transfer .ivu-transfer-list-body{
+    padding-top: 46px;
+}
+.my-transfer .ivu-transfer-list-content-item{
+    display: flex;
+}
+.my-transfer .ivu-transfer-list-content-item > span{
+    padding-left: 20px;
+    display: flex;
+    justify-content: space-between;
+    flex: 1;
+}
+.my-transfer .ivu-transfer-list:last-child .ivu-transfer-list-body .ivu-transfer-list-content{
+    display: none;
+}
+.my-transfer .ivu-transfer-list:last-child .ivu-transfer-list-header{
+    padding: 8px 16px 8px 7px;
+}
+.my-transfer .ivu-transfer-list:last-child .ivu-transfer-list-header > label{
+    display: none;
+}
+.my-transfer .ivu-transfer-list:last-child .ivu-transfer-list-header > span:last-child{
+    display: none;
+}
+
+
+/**
+ * 树形下拉框
+ */
+.tree-drop .ivu-dropdown-rel{
+    height: auto;
+    min-height: 32px;
+    max-height: 67px;
+}
+.special-form-line .ivu-form-item-content{
+    line-height: normal;
+}
+
+
+/**
+ * 弹出框
+ */
+@keyframes showPopView{
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+.popView{
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    outline: 0;
+    z-index: 1000;
+    animation: showPopView 0.5s;
+}
+.popView-wrap{
+    position: relative;
+    top: 100px;
+    height: 100%;
+    z-index: 1000;
+}
+.popView-content{
+    width: 400px;
+    margin: 0 auto;
+    background-color: white;
+    overflow-y: auto;
+    max-height: 70%;
+    border-radius: 6px;
+}
+.popView-title-wrap{
+    border-radius: 6px 6px 0 0;
+    position: fixed;
+    z-index: 10;
+    top: 100px;
+    width: 400px;
+    padding: 14px 16px;
+    margin: 0 auto;
+    font-weight: bold;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    box-sizing: border-box;
+    background: white;
+    border-bottom: 1px solid #e8eaec 
+}
+.popView-title{
+    line-height: 20px;
+    font-size: 14px;
+    color: #17233d;
+    font-weight: 700;
+}
+.popView-body-wrap{
+    margin-top: 46px;
+    box-sizing: border-box;
+    padding: 25px 20px;
+    font-size: 13px;
+}
+.popView-body{
+    display: flex;
+    flex-wrap: wrap;
+}
+.popView-body-row{
+    width: 100%;
+    list-style: none;
+    margin-bottom: 25px;
+    padding-right: 5%;
+    box-sizing: border-box;
+    display: flex;
+    flex-wrap: nowrap;
+}
+.half-row .popView-body-row{
+    width: 50%;
+}
+.popView-body-row .popView-name{
+    width: 100px;
+    display: inline-block;
+    color: #676a6c;
+    text-align: right;
+    padding-right: 10px;
+    line-height: 32px;
+}
+.popView-body-row .popView-input{
+    flex: 1;
+}
+.popView-input{
+    width: 100%;
+}
+.popView-footer-wrap{
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 10px;
+}
+.popView-icon{
+    display: flex;
+    align-items: center;
+}
+.close-icon{
+    font-size: 18px;
+    cursor: pointer;
+}

@@ -1,0 +1,8 @@
+
+.search-btn{
+  opacity: 0;
+  visibility: hidden;
+}
+.el-vue-search-box-container .search-box-wrapper span{
+    color: red;
+  }

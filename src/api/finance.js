@@ -1,0 +1,91 @@
+import axios from '@/libs/api.request'
+
+// 发票列表（查询）
+export const getInvoiceList = (data) => {
+  return axios.request({
+    url: '/admin/finance/invoice/list',
+    data,
+    method: 'post'
+  })
+}
+
+// 发票详情
+export const getInvoiceDetail = (data) => {
+  return axios.request({
+    url: '/admin/finance/invoice/get',
+    data,
+    method: 'post'
+  })
+}
+
+// 快递单号录入
+export const inputPostInfo = (data) => {
+  return axios.request({
+    url: '/admin/finance/invoice/saveExpressNo',
+    data,
+    method: 'post'
+  })
+}
+
+// 获取充值档位列表
+export const getRechargeLevelList = (data) => {
+  return axios.request({
+    url: '/admin/Strategy/recharge/query',
+    data,
+    method: 'post'
+  })
+}
+
+// 编辑充值档位
+export const editRechargeLeve = (data) => {
+  return axios.request({
+    url: '/admin/Strategy/recharge/edit',
+    data,
+    method: 'post'
+  })
+}
+
+// 添加充值档位
+export const addRechargeLeve = (data) => {
+  return axios.request({
+    url: '/admin/Strategy/recharge/add',
+    data,
+    method: 'post'
+  })
+}
+
+// 获取支付方式列表
+export const getPaywayList = (data) => {
+  return axios.request({
+    url: '/admin/Strategy/payway/query',
+    data,
+    method: 'post'
+  })
+}
+
+// 上移支付方式
+export const downPayway = (data) => {
+  return axios.request({
+    url: '/admin/Strategy/payway/shiftDown',
+    data,
+    method: 'post'
+  })
+}
+
+// 下移支付方式
+export const upPayway = (data) => {
+  return axios.request({
+    url: '/admin/Strategy/payway/shiftUp',
+    data,
+    method: 'post'
+  })
+}
+
+// 更改支付方式状态
+export const changePaywayStatus = (data) => {
+  return axios.request({
+    url: '/admin/Strategy/payway/edit',
+    data,
+    method: 'post'
+  })
+}
