@@ -39,14 +39,9 @@ export default {
             });
           });
           break;
-        case "changePsd":
-          this.handleChangePsd();
+        default:
+          console.log('error!!!')
       }
-    },
-    handleChangePsd() {
-      this.$router.push({
-        name: "change_pwd"
-      });
     }
   }
 };

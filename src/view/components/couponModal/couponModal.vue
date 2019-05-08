@@ -90,7 +90,6 @@
 </template>
 <script>
 import { templateAll } from '@/api/passenger'
-import { useTypeMap, useLimitMap } from '@/config/passengerTable'
 import { selectItemByIds } from '@/libs/tools'
 
 

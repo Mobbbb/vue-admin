@@ -5,7 +5,6 @@ import OperatorData from './module/operator-data'
 import InfoCenter from './module/info-center'
 import ConfigCenter from './module/config-center'
 import PowerCenter from './module/power-center'
-import MarketCenter from './module/market-center'
 import OrderCenter from './module/order-center'
 import FinanceCenter from './module/finance-center'
 import CustomerCenter from './module/customer-center'
@@ -53,7 +52,6 @@ export default [
   },
   OperatorData,   // 运营数据
   OperatorCenter, // 营运管理中心
-  MarketCenter,   // 营销控制中心
   PowerCenter,    // 权限管理
   ConfigCenter,   // 配置管理
   FinanceCenter,  // 财务结算管理

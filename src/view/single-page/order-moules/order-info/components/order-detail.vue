@@ -86,7 +86,6 @@ import {
     cancelTypeMap,
     payTypeMap
 } from "@/libs/status-map"
-import { orderTypeMap, payPatternMap, useTypeMap } from "@/config/passengerTable"
 import CarDetail from './detail-popview/car-detail.vue'
 import CarMap from './detail-popview/car-map.vue'
 

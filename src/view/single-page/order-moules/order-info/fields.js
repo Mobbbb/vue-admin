@@ -1,4 +1,3 @@
-import { orderTypeMap, useTypeMap, useLimitMap } from '@/config/passengerTable'
 import { orderMainStatusMap } from '@/libs/status-map'
 
 /* 订单列表 */

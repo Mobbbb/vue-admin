@@ -370,30 +370,12 @@
                 :clearable="true"
                 v-model="enclosureTypeData.enclosuretype"
                 style="width:190px"
-                placeholder="请选择围栏类型"
-                @on-change="getElefenceList"
-              >
+                placeholder="请选择围栏类型">
                 <Option
                   v-for="item in railTypeList"
                   :value="item.value"
                   :key="item.value"
                 >{{ item.label }}</Option>
-              </Select>
-            </div>
-            <div class="selectmargin disflexstyle">
-              <div class="selecttitles">选择围栏</div>
-              <Select
-                :clearable="true"
-                v-model="enclosureTypeData.enclosureitem"
-                style="width:190px"
-                placeholder="请选择围栏"
-                @on-change="renderElefence"
-              >
-                <Option
-                  v-for="item in elefenlist"
-                  :value="item.uuid"
-                  :key="item.uuid"
-                >{{ item.name }}</Option>
               </Select>
             </div>
           </div>
@@ -748,27 +730,6 @@ export default {
             item.value = item.uuid;
           });
           this.driverManagerList = driverManagerList;
-        })
-        .catch(err => {});
-    },
-    getElefenceList(val) {
-      // 根据围栏类型获取围栏
-      let cityCodeData = this.chooseCityMsg;
-      this.railType = val;
-      getElefenServiceSelect({
-        cityCode: cityCodeData.cityID,
-        railType: val
-      })
-        .then(res => {
-          let map = this.$refs.map.$$getInstance();
-          let polygons = map.getAllOverlays("polygon"); //获取地图上所有得图形区域
-          this.elefenlist = res.data.data;
-          this.enclosureTypeData.enclosureitem = "";
-          polygons.length && map.remove(polygons); // 清楚地图上的所有图形区域
-          this.polygons && this.polygons.length && map.add(this.polygons); // 添加行政边界图
-          this.polygons &&
-            this.polygons.length &&
-            map.setFitView(this.polygons); //视口自适应
         })
         .catch(err => {});
     },
@@ -1303,7 +1264,7 @@ export default {
         this.getOptationByCitycode(this.chooseCityMsg.cityID);
       }
       if (this.railType) {
-        this.getElefenceList(this.railType);
+        
       }
       if (this.polygonVal) {
         this.renderElefence(this.polygonVal);

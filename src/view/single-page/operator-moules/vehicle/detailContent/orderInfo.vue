@@ -15,7 +15,6 @@
 
 <script>
 import {getOrderList} from '@/api/vehicle.js'
-import { orderStatusMap } from '@/config/passengerTable'
 
 export default {
     name:'order-list',
