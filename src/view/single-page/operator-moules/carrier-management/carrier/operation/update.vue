@@ -108,13 +108,15 @@ export default {
             else callback(new Error('请填写正确的邮箱'))
         }
         const organItem = (rule, value, callback) => {
-            if(this.params.organItem.length > 0) callback()
+            let data = value || []
+            if(data.length > 0) callback()
             else callback(new Error('组织机构不得为空'))
         }
         return {
             searchList: [],
             organList: [],
             params: {
+                organItem: [],
                 carrierArea: [],
                 addressList: [
                     {address: ''}
@@ -159,6 +161,7 @@ export default {
             if(this.popView){
                 if(this.type === "add"){
                     this.params = {
+                        organItem: [],
                         carrierArea: [],
                         addressList: [
                             {address: ''}
@@ -178,7 +181,7 @@ export default {
             this.$refs.formValidate.resetFields()
         }
     },
-    mounted() {
+    mounted () {
         this.getAllOrgan()
     },
     methods: {
@@ -220,11 +223,11 @@ export default {
         commit: function(temp){
             if(temp){
                 this.$refs.formValidate.validate().then(res => {
-                    let params = JSON.parse(JSON.stringify(this.params))
-                    params.cityId = this.params.carrierArea[1]
-                    params.interviewAddressList = this.params.addressList
-                    params.organId = this.params.organItem[this.params.organItem.length-1]
                     if(res){
+                        let params = JSON.parse(JSON.stringify(this.params))
+                        params.cityId = this.params.carrierArea[1]
+                        params.interviewAddressList = this.params.addressList
+                        params.organId = this.params.organItem[this.params.organItem.length-1]
                         for(let i = 0; i < params.mobileList.length; i++){
                             if(params.mobileList[i].area === '' || params.mobileList[i].area === null) {
                                 params.mobileList.splice(i, 1)

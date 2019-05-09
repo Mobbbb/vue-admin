@@ -342,16 +342,12 @@ export default {
   methods: {
     ...mapActions(["handleAddUuid", "handleDelUuid"]),
     getData() {
-      // console.log(this.$route.params.id)
       let data = { otherIndex: this.$route.params.id };
-      //
       getVehicleBasic(data).then(res => {
-        // console.log(res)
         if (res.data.success) {
           this.handleDelUuid();
           this.info = res.data.data;
           let uuid = this.info.uuid;
-          // console.log(uuid)
           this.handleAddUuid(uuid);
         } else {
           this.$Message.error("读取数据出错");
@@ -359,7 +355,6 @@ export default {
       });
     },
     previewImg(url) {
-      //  console.log(url)
       this.imgURL = url;
       this.imgVisible = true;
     }

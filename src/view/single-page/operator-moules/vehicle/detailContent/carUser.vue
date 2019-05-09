@@ -58,7 +58,7 @@ export default {
                 },
                 
             ],
-            total: null,
+            total: 0,
             current: 1,
             pageSize: 10,
             isLoading: false,
@@ -75,6 +75,7 @@ export default {
             getHistoricalUser(data).then(res =>{
                 this.$store.commit('changeLoadingFlag', false)
                 this.carUserData = res.data.data.list
+                this.total = res.data.data.totalCount
             })
         },
         changePageSize(val){

@@ -57,7 +57,6 @@
                     <Button type="primary" class="prev-btn" @click="perv">上一步</Button>
                     <div>运营商：{{carrierInfo.name}}</div>
                     <div class="result-title">考核时间：{{$moment(this.date).format('YYYY-MM')}}</div>
-                    <Button type="primary" class="result-btn" @click="exportFile">导出</Button>
                 </div>
                 <Table :columns="columns" :data="tabledata"></Table>
                 <div class="result-bottom-wrap">

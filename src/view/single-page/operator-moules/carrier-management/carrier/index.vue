@@ -30,7 +30,6 @@
 
 <script>
 import { returnFields, inputList } from './index'
-import { getCityOperatorTree } from '@/api/common'
 import { cppTranslate } from '@/libs/tools'
 import { getCarrierList } from '@/api/operator-carrier'
 import Update from './operation/update'
@@ -76,13 +75,7 @@ export default {
             this.updateType = 'add'
         },
         confirm: function(data){
-            if(data) {
-                this.getTableList()
-                getCityOperatorTree().then(response => { // 获取省、市、运营商级联列表
-                    let transformData = JSON.stringify(cppTranslate(response.data.data))
-                    localStorage.setItem('pcOperatorList', transformData)
-                })
-            }
+            if(data) this.getTableList()
             this.isPop = false
         },
         search: function(data){

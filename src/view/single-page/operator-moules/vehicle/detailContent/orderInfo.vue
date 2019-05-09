@@ -23,7 +23,6 @@ export default {
     },
     data(){
         return{
-            orderStatusMap,
             orderData:[],
             orderColumns:[
                 {
@@ -125,7 +124,7 @@ export default {
                     minWidth: 100,
                     tooltip: true,
                     render:(h,params) =>{
-                        return h('div', orderStatusMap[params.row.mainStatus])
+                        return h('div', params.row.mainStatus)
                     }
                 },
                 {
@@ -137,7 +136,7 @@ export default {
                 {
                     key:'routeNo',
                     title: '订单编号',
-                    minWidth: 190,
+                    minWidth: 210,
                     tooltip: true,
                     render:(h,params)=>{
                         return h('div',[
@@ -181,7 +180,12 @@ export default {
             this.getList()
         },
         goToOrderDetail(id){
-            this.$router.push({name:'order-detail',params:{id:id}})
+            this.$router.push({
+                name:'order-detail',
+                params:{
+                    id: id
+                }
+            })
         }
     }
 }
