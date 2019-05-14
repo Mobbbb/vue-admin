@@ -6,6 +6,7 @@
                 <td>
                     <Col v-for="(cell, index) in item.value" :span="cell.span" :key="index">
                         <Form class="display-div">
+                            <!--评价内容-->
                             <FormItem
                                 :label="cell.name + ' :'"
                                 style="display: flex;align-items: center;"
@@ -15,25 +16,33 @@
                             <FormItem :label="item.name + ' :'" v-else-if="item.content">
                                 <p class="detail-content" style="word-wrap: break-word;width: 240px;">{{item.value}}</p>
                             </FormItem>
+                            <!--评价内容结束-->
+
+                            <!--其他内容-->
                             <FormItem :label="cell.name + ' :'" v-else>
+                                <!--不带车辆位置、带有跳转链接的字段-->
                                 <p
                                     @click="trunToPage(cell)"
                                     class="right-detail-content link-content"
                                     v-if="typeof(cell.link) !== 'undefined' && cell.link !== 'position'">
                                     {{cell.value}}
                                 </p>
+                                <!--带车辆位置的字段-->
                                 <div style="line-height: 20px; color: #515a6e;" v-else-if="cell.link === 'position'">
                                     <span class="link-position" @click="popMapView(cell.value)">地图查看</span>
                                     <span class="link-position" @click="popDetailView(cell.value)">车辆实时状态</span>
                                 </div>
+                                <!--含有修改前价格的字段-->
                                 <div style="line-height: 20px; color: #515a6e;" v-else-if="typeof(cell.adjust) !== 'undefined'">
                                     <span>
                                         {{cell.adjust}}元
-                                        <span v-if="cell.value !== '' && cell.value !== null">（修改前{{cell.value}}元）</span>
+                                        <span v-if="cell.value !== '' && cell.value !== null && cell.value !== 0">（修改前{{cell.value}}元）</span>
                                     </span>
                                 </div>
+                                <!--其他字段-->
                                 <p class="right-detail-content" v-else>{{cell.value}}{{cell.unit}}</p>
                             </FormItem>
+                            <!--其他内容结束-->
                         </Form>
                     </Col>
                 </td>
@@ -77,7 +86,7 @@
 <script>
 import "@/styles/cyk-style.css"
 import { getOrderDetail } from "@/api/order.js"
-import { orderLeftData, orderRightData } from "../fields"
+import { orderLeftData, orderRightData, showMap } from "../fields"
 import { 
     orderMainStatusMap, 
     typeTimeMap, 
@@ -99,17 +108,20 @@ export default {
             orderCarStatus: {},
             popMap: false,
             popDetail: false,
+            showMap,
             typeTimeMap,
             payTypeMap,
             creatorTypeMap,
             cancelTypeMap,
             typeModuleMap,
-            orderLeftData,
-            orderRightData,
+            orderLeftData: [],
+            orderRightData: [],
             beforeChangeFare: {},
         };
     },
     mounted() {
+        this.orderLeftData = JSON.parse(JSON.stringify(orderLeftData))
+        this.orderRightData = JSON.parse(JSON.stringify(orderRightData))
         this.getDetailInfo()
     },
     methods: {
@@ -125,9 +137,56 @@ export default {
                 } else return ""
             } else return ""
         },*/
+        getTableColumns (map) {
+            this.orderLeftData = []
+            this.orderRightData = []
+            orderLeftData.forEach(item => {
+                map.forEach(cell => {
+                    if(item.key === cell) this.orderLeftData.push(item)
+                })
+            })
+            orderRightData.forEach(item => {
+                map.forEach(cell => {
+                    if(item.key === cell) this.orderRightData.push(item)
+                })
+            })
+        },
         getDetailInfo () {
             getOrderDetail({ orderUuid: this.$route.params.id }).then(res => {
+                let temp = false // 判断是否有开始服务字段
                 let data = res.data.data || {}
+                let orderTableMap = this.showMap[data.mainStatus] || this.showMap[8]
+                let lengthLeft = data.passingPointsList && data.passingPointsList.length || 0 // 左侧途经点长度
+                let lengthRight = data.passingPointDtos && data.passingPointDtos.length || 0 // 右侧途经点长度
+
+                this.getTableColumns(orderTableMap) // 获取左侧table展示项
+
+                for(let i = 0; i < this.orderLeftData.length; i++){
+                    if(this.orderLeftData[i].key === 'passingPoints') {
+                        this.orderLeftData.splice(i + lengthLeft, 3 - lengthLeft) // 左侧删除途经点
+                        break
+                    }
+                }
+                this.orderRightData[0].value.forEach((item, index) => {
+                    if(item.key === 'address0') {
+                        this.orderRightData[0].value.splice(index + lengthRight, 3 - lengthRight) // 右侧删除途经点
+                    }
+                })
+
+                if(data.typeTime === 1 || data.typeTime === null) { // 实时用车
+                    this.orderRightData[0].value.forEach((item, index) => {
+                        if(item.key === 'departTime') this.orderRightData[0].value.splice(index, 1) // 右侧删除预约用车时间
+                    })
+                }
+                
+                data.orderCarHistoryStatusList.forEach(item => {
+                    if(item.type === 'start_service_msg') temp = true // 有开始服务字段
+                })
+                if(!temp) { // 若无开始服务字段
+                    this.orderLeftData.forEach((item, index) => {
+                        if(item.key === 'beginService') this.orderLeftData.splice(index, 1) // 左侧删除开始服务栏
+                    })
+                }
 
                 this.orderRightData.forEach(item => { // 途经点(右侧)处理
                     item.value.forEach(cell => {
@@ -136,55 +195,83 @@ export default {
                         })
                     })
                 })
+                for(let i = 0; i < data.evaluate.length; i++){ // 加入追评
+                    if(data.evaluate[i].addType === 2) {
+                        orderLeftData.forEach(cell => {
+                            if(cell.key === 'secondEvaluate') this.orderLeftData.push(cell)
+                        })
+                        break
+                    }
+                }
                 this.orderLeftData.forEach(item => { // 评价数据处理
                     item.value.forEach(cell => {
                         data.evaluate.forEach(atom => {
                             if(cell.key === 'evaluateTime' + atom.addType) cell.value = atom.createTime
-                            if(cell.key === 'evaluateStars' + atom.addType + atom.evaluateType) cell.value = atom.score
+                            if(cell.key === 'evaluateStars' + atom.addType + atom.evaluateType) cell.value = atom.score || 0
                             if(cell.key === 'evaluateTags' + atom.addType + atom.evaluateType) cell.value = atom.evaluateTag
                             if(cell.key === 'evaluateContent' + atom.addType + atom.evaluateType) cell.value = atom.content
                         })
                     })
                 })
+
                 this.orderLeftData.forEach(item => { // 车辆位置和时间处理
                     item.value.forEach(cell => {
                         data.orderCarHistoryStatusList.forEach(atom => {
                             if(cell.key === atom.type + '_time') cell.value = atom.time
                             if(cell.key === atom.type + '_position') cell.value = atom
                         })
-                        data.passingPointsList.forEach(atom => {
-                            if(cell.key === atom.type + '_time') cell.value = atom.time
-                            if(cell.key === atom.type + '_position') cell.value = atom
+                        data.passingPointsList.forEach((atom, index) => {
+                            if(cell.key === atom.type + '_time' + index) cell.value = atom.time
+                            if(cell.key === atom.type + '_position' + index) cell.value = atom
                         })
                     })
                 })
                 
                 for(let key in data) { // 整体赋值
-                    this.orderLeftData.forEach(item => {
+                    this.orderLeftData.forEach(item => { // 左侧
                         item.value.forEach(cell => {
                             if(cell.key === key) {
-                                cell.value = data[key]
-                                if(typeof(cell.adjust) !== 'undefined'){
+                                cell.value = data[key] // 整体赋值
+                                
+                                if(typeof(cell.adjust) !== 'undefined'){ // 修改后金额赋值
                                     let upperCaseKey = cell.key.substring(0, 1).toUpperCase() + cell.key.substring(1)
-                                    cell.adjust = data['adjust' + upperCaseKey]
+                                    cell.adjust = data['adjust' + upperCaseKey] || 0
                                 }
+
+                                // 折扣字段处理
+                                if(cell.value !== '' && cell.value !== null && cell.acount) cell.value = data[key] + '折'
+
+                                // 数字内容转实际含义
                                 if(key === 'payType' && cell.value.indexOf(',') !== -1) cell.value = '组合'
                                 if(key === 'payType' && cell.value.indexOf(',') === -1) cell.value = payTypeMap[cell.value]
+                                if(key === 'billedStatus' && cell.value === 1) cell.value = '已开票'
+                                if(key === 'billedStatus' && cell.value === 0) cell.value = '待开票'
+                                if(key === 'invoiceType' && cell.value === 1) cell.value = '电子发票'
+                                if(key === 'invoiceType' && cell.value === 2) cell.value = '纸质发票'
                             }
+                            if((cell.value === '' || 
+                                cell.value === null || 
+                                typeof(cell.value) === 'undefined') && 
+                                cell.type !== 'number') cell.value = '暂无'
+                            if((cell.value === null || cell.value === '') && cell.type === 'number') cell.value = 0
                         })
                     })
-                    this.orderRightData.forEach(item => {
+                    this.orderRightData.forEach(item => { // 右侧
                         item.value.forEach(cell => {
                             if(cell.key === key) {
-                                cell.value = data[key]
+                                cell.value = data[key] // 整体赋值
+                                
                                 if(key === 'passengerName') cell.uuid = data.passengerUuid
                                 if(key === 'actualDriverName') cell.uuid = data.driverUuid
+
+                                // 数字内容转实际含义
                                 if(key === 'typeTime') cell.value = typeTimeMap[cell.value]
                                 if(key === 'typeModule') cell.value = typeModuleMap[cell.value]
                                 if(key === 'mainStatus') cell.value = orderMainStatusMap[cell.value]
                                 if(key === 'creatorType') cell.value = creatorTypeMap[cell.value]
                                 if(key === 'cancelType') cell.value = cancelTypeMap[cell.value]
                             }
+                            if(cell.value === null || cell.value === '' || typeof(cell.value) === 'undefined') cell.value = '暂无'
                         })
                     })
                 }
@@ -192,30 +279,31 @@ export default {
         },
         trunToPage (params) {
             if(params.link === 'vin'){ // 点击vin码
-                this.$router.push({
-                    name: 'vehicle-detail',
-                    params: {
-                        id: params.value
-                    }
-                })
+                if(params.value !== '暂无') {
+                    this.$router.push({
+                        name: 'vehicle-detail',
+                        params: {
+                            id: params.value
+                        }
+                    })
+                }
             } else if (params.link === 'coupon'){ // 点击优惠券编号
 
             } else if (params.link === 'invoice') { // 点击发票编号
 
             } else if (params.link === 'passenger') {
-                this.$router.push({
-                    name: 'customer-detail',
-                    params: {
-                        id: params.uuid
-                    }
-                })
+                if(params.uuid === '' || typeof(params.uuid) === 'undefined' || params.uuid === null) {
+                    this.$Message.warning('暂无乘客信息')
+                } else {
+                    this.$router.push({
+                        name: 'customer-detail',
+                        params: {
+                            id: params.uuid
+                        }
+                    })
+                }
             } else if (params.link === 'driver') {
-                this.$router.push({
-                    name: 'staff-detail',
-                    params: {
-                        id: params.uuid
-                    }
-                })
+                this.$Message.warning('暂无司机信息') 
             } else {
                 console.log('通知前端！！')
             }

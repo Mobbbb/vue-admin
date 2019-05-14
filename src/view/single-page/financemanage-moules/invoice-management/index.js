@@ -265,7 +265,7 @@ export const Columns = (that) => {
                 that.postForm.uuid = '';
                 that.postForm.uuid = params.row.uuid;
                 that.editMobel = true;
-                that.toType=2;
+                that.toType = 2;
               }
             }
           }, '快递单号录入'),

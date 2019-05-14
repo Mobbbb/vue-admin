@@ -137,7 +137,7 @@
             v-model="callpolicedata.name"
             placeholder
             style="width: 300px"
-            :disabled="policedisabled"
+            :readonly="policedisabled"
           />
         </div>
         <div class="top15">
@@ -145,8 +145,7 @@
           <Select
             v-model="callpolicedata.serviceType"
             style="width:300px"
-            :disabled="policedisabled"
-          >
+            :disabled="policedisabled">
             <Option
               v-for="(item,index) in productList"
               :value="item.value"
@@ -161,7 +160,7 @@
             :min="minnumber"
             :max="maxnumber"
             style="width: 300px"
-            :disabled="policedisabled"
+            :readonly="policedisabled"
           ></InputNumber>
           <span style="margin: 0 20px 0 5px">分钟</span>
         </div>
@@ -172,8 +171,8 @@
             :min="minnumber"
             :max="maxnumber"
             style="width: 300px"
-            :disabled="policedisabled"
-          ></InputNumber>
+            :readonly="policedisabled">
+          </InputNumber>
           <span style="margin: 0 32px 0 5px">次</span>
         </div>
         <div class="top15">
@@ -181,8 +180,7 @@
           <Select
             v-model="callpolicedata.divergePercent"
             style="width:280px"
-            :disabled="policedisabled"
-          >
+            :disabled="policedisabled">
             <Option v-for="index in 99" :value="index" :key="index">{{ index }}%</Option>
           </Select>
         </div>
@@ -206,8 +204,7 @@
             placeholder="请填写备注"
             type="textarea"
             style="width: 305px"
-            :disabled="policedisabled"
-          />
+            :readonly="policedisabled"/>
         </div>
       </div>
       <div slot="footer">
@@ -231,7 +228,6 @@ import {
   orderselectAll,
   orderUpdateStrategy,
   getChoiceCity,
-  getAgentList,
   calenderUpdate,
   calenderSelectByParam,
   calenderInsertCalendar,
@@ -376,7 +372,6 @@ export default {
         }
       ],
       divergePercentData: 100,
-      csmStrategyOptmaners: [],
       holidayModel: false,
       type: "add",
       modaltitle: "新建",
@@ -440,7 +435,6 @@ export default {
   mounted() {
     this.getOrdersStragyList();
     this.getCalcudate();
-    this.getmanager();
   },
   methods: {
     queryList(data) {
@@ -724,8 +718,6 @@ export default {
     },
     getSelectCity(data) {
       if (!data.length) return;
-      // this.csmStrategyOptmaners = []
-      // this.checkonmadaldata.operatorUuid = ''
       data.forEach(item => {
         if (item == "1") {
           this.cityCodeArrayCheckon = ["1"];
@@ -734,11 +726,6 @@ export default {
           this.checkonmadaldata.city = data.join(",");
         }
       });
-    },
-    getmanager() {
-      getAgentList({ cityId: 1 }).then(res => {
-        this.csmStrategyOptmaners = res.data.data;
-      })
     },
     getOptionSelect(data) {
       this.checkonmadaldata.operatorUuid = data.join(",");

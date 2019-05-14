@@ -9,15 +9,30 @@
           <Col v-for="(cell, index) in item.value" :span="cell.span" :key="index">
               <Form class="display-div">
                   <FormItem :label="cell.name + ' :'">
+                    <!--查看头像-->
                     <div class="detail-content" v-if="cell.key === 'face'">
                       <Button size="small" shape="circle" icon="ios-search" @click="popPic = true"></Button>
                       <Modal v-model="popPic" title="查看头像">
                         <img :src="cell.value" style="width: 100%;">
                       </Modal>
                     </div>
-                    <p class="border-content1" v-else-if="cell.key === 'accountStatus'">{{cell.value}}</p>
-                    <p class="border-content2" v-else-if="cell.key === 'realnameStatus'">{{cell.value}}</p>
-                    <p class="detail-content" v-else>{{cell.value}}</p>
+                    <!--账号状态-->
+                    <p class="border-content1" v-else-if="cell.key === 'status'">{{cell.value}}</p>
+                    <!--实名制状态 -->
+                    <p class="border-content2" v-else-if="cell.key === 'dautoynmStatus'">{{cell.value}}</p>
+                    <!--设备型号-->
+                    <div class="detail-content" v-else-if="cell.key === 'deviceTypeAndToken'">
+                      <div v-if="cell.value.length">
+                        <p v-for="(atom, index) in cell.value">
+                          <span style="margin: 0 5px 0 67px;" v-if="index">{{atom.deviceType}}</span>
+                          <span style="margin-right: 5px;" v-else>{{atom.deviceType}}</span>
+                          <span>{{atom.deviceToken}}</span>
+                        </p>
+                      </div>
+                      <div v-else>暂无</div>
+                    </div>
+                    <!--其他字段-->
+                    <p class="detail-content" v-else>{{cell.value}}{{cell.unit}}</p>
                   </FormItem>
               </Form>
           </Col>
@@ -119,13 +134,17 @@ import {
   queryCouponList, 
   queryDisableAccountList, 
   queryEmergencyContactList, 
-  queryTripShareList
+  queryTripShareList,
+  getCustomerRefundList
 } from '@/api/passenger.js'
 
 export default {
   data() {
     return {
       ...pageData,
+      total: 0,
+      current: 1,
+      pageSize: 10,
       customerData,
       popPic: false,
       tabsIndex: '0',
@@ -186,13 +205,14 @@ export default {
             item.value.forEach(cell => {
               if(cell.key === key) {
                 cell.value = data[key]
-                if(key === 'deviceList') cell.value = cell.value.join()
                 if(key === 'sex') cell.value = sexMap[cell.value]
                 if(key === 'dautoynmStatus') cell.value = dautoynmStatusMap[cell.value]
                 if(key === 'status') cell.value = accountStatusMap[cell.value]
                 if(key === 'registerSource') cell.value = registerSourceMap[cell.value]
-                if(key === 'registerChannel' && cell.value === 1) cell.value = 'app'
+                if(key === 'registerChannel' && cell.value === '1') cell.value = 'app'
+                if(key === 'age' && cell.value !== '' && cell.value !== null) cell.value = data[key] + '岁'
               }
+              if(cell.value === null || cell.value === '' || typeof(cell.value) === 'undefined') cell.value = '暂无'
             })
           })
         }
@@ -229,6 +249,7 @@ export default {
           this.tableColumns = [...expenseHistory]
           break;
         case 3: // 退款记录
+          this.getTable(index)
           this.tableData = []
           this.tableColumns = [...refundHistory]
           break;
@@ -291,7 +312,7 @@ export default {
               totalRechargeAmount: data.totalRechargeAmount ? data.totalRechargeAmount : '0',
               totalRechargeCount: data.totalRechargeCount ? data.totalRechargeCount : '0',
               accountCash: data.accountCash ? data.accountCash : '0',
-              giftBalance: data.accountCash ? data.accountCash : '0'
+              giftBalance: data.giftBalance ? data.giftBalance : '0'
             }
           })
           break
@@ -431,7 +452,7 @@ export default {
               },
               on: {
                 click: () => {
-                  this.$router.push({name:'coupons-detail', params:{ id:params.row.uuid}})
+                  
                 }
               }
             }, '详情')
@@ -478,7 +499,7 @@ export default {
   line-height: 20px;
 }
 .border-content1{
-  width: 75px;
+  width: 70px;
   border: 1px solid #e8eaec;
   border-radius: 4px;
   margin-left: 70px;
@@ -486,7 +507,7 @@ export default {
   line-height: 20px;
 }
 .border-content2{
-  width: 75px;
+  width: 70px;
   border: 1px solid #e8eaec;
   border-radius: 4px;
   margin-left: 80px;

@@ -44,9 +44,9 @@
         </div>
     </Modal>
     <VTable
-      :total="total"
-      :current="current"
-      :pageSize="pageSize"
+      :total="pageData.total"
+      :current="pageData.current"
+      :pageSize="pageData.pageSize"
       :parColumns="tableColumns"
       :parTableData="tableData"
       @sort="sort"
@@ -62,12 +62,28 @@ import { fields, pageData, inputList } from './fields';
 import {queryList, deblock, block} from '@/api/passenger.js';
 
 export default {
-  created() {
-    this.inputList = JSON.parse(JSON.stringify(inputList))
-    this.getList();
-  },
   mounted() {
     this.getTableColumns();
+    
+    let isReload = this.$store.state.cache['customer-basic']
+    if(isReload){
+      Object.keys(this.searchData).forEach(key=>{
+        this.searchData[key] = ''
+      })
+      this.pageData = {
+        total: 0,
+        current: 1,
+        pageSize: 10
+      }
+      this.inputList.forEach(item=>{
+        item.value = ''
+      })
+      this.getList();
+      this.$store.commit('switchCacheState',['customer-basic',false])
+    }else{
+      this.$store.commit('changeLoadingFlag', false)
+      this.tableData.length===0 && this.getList();
+    }
   },
   data() {
     return {
@@ -76,7 +92,7 @@ export default {
             return date && date.valueOf() < Date.now()
         }
       },
-      inputList: [],
+      inputList,
       tableColumnsChecked: ['realname', 'mobile', 'sex', 'age', 'grealnameOrNot', 'cash', 'status', 'registerTime'],
       // customList: {...fields},
       ...pageData,
@@ -84,27 +100,31 @@ export default {
   },
   methods: {
     search: function(data){
-      this.searchData = data
-      this.current = 1
+      Object.keys(data).forEach(key=>{
+        this.searchData[key] = data[key]
+      })
+      this.pageData.current = 1
       this.getList()
     },
     reset: function(data){
-      this.searchData = {}
-      this.current = 1
+      Object.keys(this.searchData).forEach(key=>{
+        this.searchData[key] = ''
+      })
+      this.pageData.current = 1
       this.getList()
     },
     getList() {
       let params = {
-        currPage: this.current,
-        pageSize: this.pageSize
+        currPage: this.pageData.current,
+        pageSize: this.pageData.pageSize
       };
       if(this.searchData) {
         Object.assign(params, this.searchData)
       }
       queryList(params).then(res => {
         let data = res.data.data.pageResult
-        this.total = data.totalCount;
-        this.tableData = data.list;
+        this.pageData.total = data.totalCount
+        this.tableData = data.list
         this.$store.commit('changeLoadingFlag', false)
       })
     },
@@ -198,7 +218,7 @@ export default {
       this.tableColumns = data;
     },
     changePageSize(val) {
-      this.pageSize = val;
+      this.pageData.pageSize = val;
       this.getList();
     },
     sort(data) {
@@ -221,7 +241,7 @@ export default {
       this.ids = strIds.join();
     },
     changePage (val) {
-      this.current = val;
+      this.pageData.current = val;
       this.getList();
     },
     registerTime (value) {

@@ -12,7 +12,7 @@ import {
   freezeTypeMap,
   typeModuleMap
 } from '@/libs/status-map'
-//import router from 'router'
+import router from '@/router'
 
 /* 用户列表 */
 export const fields = {
@@ -102,11 +102,17 @@ export const orderHistory = [
     key: 'routeNo',
     tooltip: true,
     minWidth: 200,
+    fixed: 'left',
     render: (h, params) => {
       return h('a', {
         on: {
           click: () => {
-            //console.log(router)
+            router.push({
+              name: 'order-detail',
+              params: {
+                id: params.row.orderUuid
+              }
+            })
           }
         }
       }, params.row.routeNo)
@@ -212,7 +218,7 @@ export const rechargeHistory = [
     minWidth: 110,
     key: 'xxxxx',
     render: (h, params) =>{
-      return h('span', '后端说暂无，置空')
+      return h('span', '暂无')
     }
   },
   {
@@ -249,7 +255,12 @@ export const expenseHistory = [
       return h('a', {
         on: {
           click: () => {
-            //console.log(router)
+            router.push({
+              name: 'order-detail',
+              params: {
+                id: params.row.orderUuid
+              }
+            })
           }
         }
       }, params.row.relatedOrder)
@@ -363,7 +374,8 @@ export const coupons = [
     title: '优惠券名称',
     key: 'couponName',
     width: 150,
-    tooltip: true
+    tooltip: true,
+    fixed: 'left'
   },
   {
     title: '活动名称',
@@ -371,7 +383,7 @@ export const coupons = [
     width: 150,
     tooltip: true,
     render: (h, params) => {
-      return h('span', '后端说暂无，置空')
+      return h('span', '暂无')
     }
   },
   {
@@ -399,9 +411,9 @@ export const coupons = [
     title: '有效期',
     key: 'expiryDate',
     tooltip: true,
-    width: 180,
+    width: 190,
     render: (h, params) => {
-      return h('span', params.row.expiryDateBegin + '-' + params.row.expiryDateEnd)
+      return h('span', params.row.expiryDateBegin + ' ~ ' + params.row.expiryDateEnd)
     }
   },
   {
@@ -411,15 +423,6 @@ export const coupons = [
     width: 100,
     render: (h, params) => {
       return h('span', couponStatusMap[params.row.grantState])
-    }
-  },
-  {
-    title: '用券订单',
-    key: 'orderUuid',
-    tooltip: true,
-    minWidth: 180,
-    render: (h, params) => {
-      return h('a', '后端说产品已舍弃')
     }
   }
 ]
@@ -444,10 +447,10 @@ export const banHistory = [
   {
     title: '封号期限',
     tooltip: true,
-    minWidth: 110,
+    minWidth: 250,
     key: 'xxxx',
     render: (h, params) => {
-      return h('span', 'RPC说没有')
+      return h('span', params.row.disableTime + ' ~ ' + params.row.blockEnd)
     }
   },
   {
@@ -536,9 +539,11 @@ export const tripSharing = [
 
 export const pageData = {
   isShowAudit: false,
-  total: 0,
-  current: 1,
-  pageSize: 10,
+  pageData:{
+    total: 0,
+    current: 1,
+    pageSize: 10
+  },
   pageSizeOpts: [10, 30, 50, 100],
   tableColumns: [],
   sidx: 'csmId',
@@ -613,10 +618,10 @@ export const customerData = [
       { name: "账号状态", key: "status", span: '12', value: ''},
       { name: "乘客姓名", key: "name", span: '12', value: ''},
       { name: "实名制状态", key: "dautoynmStatus", span: '12', value: ''},
-      { name: "乘客昵称", key: "nickname", span: '12', value: ''},
+      { name: "乘客昵称", key: "nickName", span: '12', value: ''},
       { name: "证件类型", key: "IDCardType", span: '12', value: '身份证'},
       { name: "年龄", key: "age", span: '12', value: ''},
-      { name: "证件号", key: "IDNO", span: '12', value: ''},
+      { name: "证件号", key: "iDNO", span: '12', value: ''},
       { name: "籍贯", key: "nativePalce", span: '12', value: ''},
       { name: "头像", key: "face", span: '12', value: ''},
       { name: "性别", key: "sex", span: '24', value: ''},
@@ -647,10 +652,9 @@ export const customerData = [
     key: 'walletInfo',
     title: '钱包信息',
     value: [
-      { name: "余额", key: "accountCash", span: '12', value: ''},
-      { name: "信用额度", key: "creditLine", span: '12', value: ''},
-      { name: "现金", key: "cash", span: '24', value: ''},
-      { name: "赠送币", key: "accountGiftMoney", span: '24', value: ''}
+      { name: "余额", key: "passengerAccountBalance", span: '24', value: '', unit: '元'},
+      { name: "现金", key: "cash", span: '24', value: '', unit: '元'},
+      { name: "赠送币", key: "accountGiftMoney", span: '24', value: '', unit: '元'}
     ]
   },
   {
@@ -658,7 +662,7 @@ export const customerData = [
     title: '其他信息',
     value: [
       { name: "客户端APP版本", key: "appVersion", span: '12', value: ''},
-      { name: "设备型号", key: "deviceList", span: '12', value: ''},
+      { name: "设备型号", key: "deviceTypeAndToken", span: '12', value: []},
       { name: "最近一次冒泡城市", key: "lastStayCity", span: '24', value: ''},
       { name: "最近一次下单城市", key: "lastOrderCity", span: '24', value: ''}
     ]

@@ -180,7 +180,6 @@
       },
       confirm(data) {
         if (data) this.getTableList({});
-        this.floatParams = data
         this.isPop = false;
       },
       search(data) {

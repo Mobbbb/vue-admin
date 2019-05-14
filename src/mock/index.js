@@ -1,9 +1,21 @@
 import Mock from 'mockjs'
 import { getNavList, getUserInfo } from './data/power-data'
+// 登录相关、获取菜单、获取用户信息
+Mock.mock(/\/auth-api\/api\/v1\/staff\/selectLoginStaffInfo/, getUserInfo) // 获取用户信息
+Mock.mock(/\/auth-api\/api\/auth\/resource\/queryResourceByAccountId/, getNavList) // 菜单资源列表
+
 import { 
     getAgentByCity, queryCarListByRemote, getOpmanerByOrgan, 
     getSiteList, getDriverDetail, getCarByVin
 } from './data/map-data'
+// 运营地图
+Mock.mock(/\/t3-admin\/admin\/driverRemote\/getAgentByCity/, getAgentByCity) // 根据城市获取运营商
+Mock.mock(/\/t3-admin\/admin\/driverRemote\/getCarDistribution/, queryCarListByRemote) // 查询地图服务要求的数据信息
+Mock.mock(/\/t3-admin\/admin\/driver\/managerDriver/, getOpmanerByOrgan) // 根据运营商获取司管
+Mock.mock(/\/t3-admin\/system\/serviceSiteList/, getSiteList) // 获取站点列表
+Mock.mock(/\/t3-admin\/admin\/driver\/detail/, getDriverDetail) // 获取司机详情信息
+Mock.mock(/\/t3-admin\/admin\/carManager\/detailInfo/, getCarByVin) // 根据vin获取车辆的基础信息
+
 import { 
     getDriverList, getAllOrgan, getAgentPageList, 
     getAgentById, returnSuccess, getAgentRules,
@@ -16,19 +28,6 @@ import {
     getAuthorizedDriverList, getViolationRecordList, getCarOrderList,
     getHistoricalUserList
 } from './data/operator-data'
-
-// 登录相关、获取菜单、获取用户信息
-Mock.mock(/\/auth-api\/api\/v1\/staff\/selectLoginStaffInfo/, getUserInfo) // 获取用户信息
-Mock.mock(/\/auth-api\/api\/auth\/resource\/queryResourceByAccountId/, getNavList) // 菜单资源列表
-
-// 运营地图
-Mock.mock(/\/t3-admin\/admin\/driverRemote\/getAgentByCity/, getAgentByCity) // 根据城市获取运营商
-Mock.mock(/\/t3-admin\/admin\/driverRemote\/getCarDistribution/, queryCarListByRemote) // 查询地图服务要求的数据信息
-Mock.mock(/\/t3-admin\/admin\/driver\/managerDriver/, getOpmanerByOrgan) // 根据运营商获取司管
-Mock.mock(/\/t3-admin\/system\/serviceSiteList/, getSiteList) // 获取站点列表
-Mock.mock(/\/t3-admin\/admin\/driver\/detail/, getDriverDetail) // 获取司机详情信息
-Mock.mock(/\/t3-admin\/admin\/carManager\/detailInfo/, getCarByVin) // 根据vin获取车辆的基础信息
-
 // 营运管理
 Mock.mock(/\/t3-admin\/protocolAgree\/queryPage/, getDriverList) // 获取协议
 Mock.mock(/\/t3-admin\/admin\/sysAgent\/getAllOrgan/, getAllOrgan) // 获取所有组织机构
@@ -72,6 +71,80 @@ Mock.mock(/\/t3-admin\/admin\/carManager\/violationRecord/, getViolationRecordLi
 Mock.mock(/\/t3-admin\/admin\/carManager\/orderList/, getCarOrderList) // 获取车辆订单信息
 Mock.mock(/\/t3-admin\/admin\/carManager\/historicalUser/, getHistoricalUserList) // 获取历史使用人
 
+import { 
+    getInvoiceList, getInvoiceDetail, getRechargeLevelList,
+    getPaywayList, getFaceRecognitionList, getEstablishCityList,
+    establishCityDetail, queryCreditModel, getDiscountConfig,
+    getServiceSiteList, getStrategyList, getAlarmList,
+    getAppProtolList, getDeviceList, getElectronicFenceList
+} from './data/finance-data'
+// 配置管理
+Mock.mock(/\/t3-admin\/admin\/finance\/invoice\/list/, getInvoiceList) // 获取发票列表
+Mock.mock(/\/t3-admin\/admin\/finance\/invoice\/saveExpressNo/, returnSuccess) // 快递单号录入
+Mock.mock(/\/t3-admin\/admin\/finance\/invoice\/get/, getInvoiceDetail) // 获取发票详情
+Mock.mock(/\/t3-admin\/admin\/Strategy\/recharge\/query/, getRechargeLevelList) // 获取充值档位列表
+Mock.mock(/\/t3-admin\/admin\/Strategy\/recharge\/edit/, returnSuccess) // 更新充值档位
+Mock.mock(/\/t3-admin\/admin\/Strategy\/recharge\/add/, returnSuccess) // 新增充值档位
+Mock.mock(/\/t3-admin\/admin\/Strategy\/payway\/query/, getPaywayList) // 获取支付方式列表
+Mock.mock(/\/t3-admin\/admin\/Strategy\/payway\/shiftDown/, returnSuccess) // 更改支付方式顺序
+Mock.mock(/\/t3-admin\/admin\/Strategy\/payway\/shiftUp/, returnSuccess) // 更改支付方式顺序
+Mock.mock(/\/t3-admin\/admin\/Strategy\/payway\/edit/, returnSuccess) // 开启/关闭支付方式
+Mock.mock(/\/t3-admin\/config\/carFaceRecognition\/list/, getFaceRecognitionList) // 人脸识别列表
+Mock.mock(/\/t3-admin\/config\/carFaceRecognition\/update/, returnSuccess) // 人脸识别切换登录方式
+Mock.mock(/\/t3-admin\/config\/carModelsLevel\/listData/, getEstablishCityList) // 开通城市列表
+Mock.mock(/\/t3-admin\/config\/carModelsLevel\/detail/, establishCityDetail) // 定价策略
+Mock.mock(/\/t3-admin\/config\/carModelsLevel\/openCity/, returnSuccess) // 开启城市
+Mock.mock(/\/t3-admin\/config\/carModelsLevel\/addCity/, returnSuccess) // 开通城市
+Mock.mock(/\/t3-admin\/config\/carModelsLevel\/queryCreditModel/, queryCreditModel) // 坏账策略
+Mock.mock(/\/t3-admin\/config\/carModelsLevel\/saveCreditModel/, returnSuccess) // 修改坏账策略
+Mock.mock(/\/t3-admin\/config\/carModelsLevel\/update/, returnSuccess) // 修改定价策略
+Mock.mock(/\/t3-admin\/config\/carModelsLevel\/getDiscountConfig/, getDiscountConfig) // 获取折扣矩阵
+Mock.mock(/\/t3-admin\/system\/serviceSitePageList/, getServiceSiteList) // 场地管理列表
+Mock.mock(/\/t3-admin\/system\/saveServiceSite/, returnSuccess) // 编辑场地
+Mock.mock(/\/t3-admin\/system\/deleteServiceSite/, returnSuccess) // 删除场地
+Mock.mock(/\/t3-admin\/system\/importServiceSite/, returnSuccess) // 导入场地
+Mock.mock(/\/t3-admin\/admin\/strategy\/selectAll/, getStrategyList) // 免费取消策略列表
+Mock.mock(/\/t3-admin\/admin\/alarmStrategy\/list/, getAlarmList) // 报警策略列表
+Mock.mock(/\/t3-admin\/admin\/strategy\/add/, returnSuccess) // 新建取消策略
+Mock.mock(/\/t3-admin\/admin\/strategy\/updateStrategy/, returnSuccess) // 编辑策略
+Mock.mock(/\/t3-admin\/admin\/strategy\/delete/, returnSuccess) // 停用策略
+Mock.mock(/\/t3-admin\/admin\/alarmStrategy\/save/, returnSuccess) // 新建报警策略
+Mock.mock(/\/t3-admin\/admin\/alarmStrategy\/update/, returnSuccess) // 新建报警策略
+Mock.mock(/\/t3-admin\/admin\/sysProtol\/query/, getAppProtolList) // APP协议列表
+Mock.mock(/\/t3-admin\/admin\/sysProtol\/save/, returnSuccess) // 新建APP协议
+Mock.mock(/\/t3-admin\/admin\/sysProtol\/edit/, returnSuccess) // 编辑APP协议
+Mock.mock(/\/t3-admin\/admin\/orderEquipment\/list/, getDeviceList) // 获取接单设备列表
+Mock.mock(/\/t3-admin\/admin\/orderEquipment\/switchDevice/, returnSuccess) // 切换接单设备
+Mock.mock(/\/t3-admin\/admin\/sysElectronicFence\/select/, getElectronicFenceList) // 电子围栏列表
+Mock.mock(/\/t3-admin\/admin\/sysElectronicFence\/saveOrUpdate/, returnSuccess) // 新增电子围栏
 
+import { 
+    getOrderList, getRoutePointModifyRecord, getActualTrack,
+    getPlanningPath, getOrderDetail
+} from './data/order-data'
+// 订单管理
+Mock.mock(/\/t3-admin\/admin\/order\/queryOrderListByPage/, getOrderList) // 订单列表
+Mock.mock(/\/t3-admin\/admin\/order\/getOrderDetailByOrderId/, getOrderDetail) // 订单详情
+Mock.mock(/\/t3-admin\/admin\/order\/routePointModifyRecord/, getRoutePointModifyRecord) // 途经点修改记录列表
+Mock.mock(/\/t3-admin\/admin\/order\/actualTrack/, getActualTrack) // 实际行车轨迹
+Mock.mock(/\/t3-admin\/admin\/order\/planningPath/, getPlanningPath) // 规划轨迹
+
+import { 
+    getCustomerList, getCustomerDetail, getCustomerOrderList,
+    getRechargeList, getCustomerCouponList, getCustomerRefundList,
+    getConsumptionList, getDisableAccountList, getEmergencyContactList,
+    getTripShareList
+} from './data/customer-data'
+// 订单管理
+Mock.mock(/\/t3-admin\/admin\/passenger\/queryList/, getCustomerList) // 乘客列表
+Mock.mock(/\/t3-admin\/admin\/passenger\/queryDetail/, getCustomerDetail) // 乘客详情
+Mock.mock(/\/t3-admin\/admin\/passenger\/queryOrderList/, getCustomerOrderList) // 乘客订单列表
+Mock.mock(/\/t3-admin\/admin\/passenger\/queryRechargeList/, getRechargeList) // 乘客充值记录列表
+Mock.mock(/\/t3-admin\/admin\/passenger\/listCoupon/, getCustomerCouponList) // 乘客优惠券列表
+Mock.mock(/\/t3-admin\/admin\/passenger\/queryRefundList/, getCustomerRefundList) // 乘客退款列表
+Mock.mock(/\/t3-admin\/admin\/passenger\/queryConsumptionList/, getConsumptionList) // 乘客消费列表
+Mock.mock(/\/t3-admin\/admin\/passenger\/queryDisableAccountList/, getDisableAccountList) // 封号记录列表
+Mock.mock(/\/t3-admin\/admin\/passenger\/queryEmergencyContactList/, getEmergencyContactList) // 紧急联系人列表
+Mock.mock(/\/t3-admin\/admin\/passenger\/queryTripShareList/, getTripShareList) // 行程分享列表
 
 export default Mock

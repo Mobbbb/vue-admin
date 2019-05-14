@@ -9,7 +9,6 @@
       :isLoading="isLoading"
       :parColumns="parColumns"
       :parTableData="tableData"
-      :nodatatext="nodatatext"
       @changePage="changePage"
       @changePageSize="changePageSize"
       style="margin-top: 25px;">
@@ -174,15 +173,14 @@ export default {
         invoiceImg:'',
         oderData:[],
         columnOrder:[],
-        isAllDataRender: false,
-        nodatatext: '请根据搜索条件筛选数据'
+        isAllDataRender: false
       }
     },
     mounted () {
       this.inputList = inputList
       this.columnOrder = columnOrder(this)
       Object.entries(Columns(this)).forEach(([key,value])=> {this.parColumns.push(value)})
-      this.$store.commit('changeLoadingFlag', false)
+      this.getTableList()
     },
     methods: {
       downloadIamge(){
@@ -227,11 +225,11 @@ export default {
         this.pageSize = val;
       },
       poster_ok: function () {
-        if(this.postForm.logisticsOrderNo==''){
+        if(this.postForm.logisticsOrderNo === ''){
           this.$Message.error('输入不能为空')
-        }else {
+        } else {
           let data = this.postForm;
-          inputPostInfo(data).then(res=>{
+          inputPostInfo(data).then(res => {
             this.$Message.success('录入成功')
             this.editMobel = false
             this.getTableList()

@@ -120,16 +120,15 @@ export default {
       axiosPlanningPath({ routeUuid: this.id }).then(res => {
         let resData = res.data.data
         // 规划路线标记点
-        let iconOffsetArr = [
-          {
-            iconContent: that.iconFun("起", "org-icon"),
-            LngLat: resData.originPointDto
-          },
-          {
-            iconContent: that.iconFun("终", "org-icon"),
-            LngLat: resData.destPointDto
-          }
-        ];
+        let iconOffsetArr = []
+        resData.originPointDto && iconOffsetArr.push({
+          iconContent: that.iconFun("起", "org-icon"),
+          LngLat: resData.originPointDto
+        })
+        resData.destPointDto && iconOffsetArr.push({
+          iconContent: that.iconFun("终", "org-icon"),
+          LngLat: resData.destPointDto
+        })
         resData.passingPointDtos.forEach(item => {
           iconOffsetArr.push({
             iconContent: that.iconFun("经", "org-icon"),

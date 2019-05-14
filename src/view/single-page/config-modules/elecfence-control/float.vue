@@ -662,28 +662,14 @@ export default {
             if (this.type === "edit") {
               newJSON.uuid = this.uuid;
             }
-            savePen(newJSON)
-              .then(res => {
+            savePen(newJSON).then(res => {
                 this.$emit("on-confirm", true);
                 this.$Message.success(res.data.msg);
-              })
-              .catch(err => {});
+            })
           }
         });
       } else {
-        let newparmas = {
-          name: "",
-          carrierArea: [],
-          serviceType: "",
-          railType: "",
-          scope: "",
-          getpathData: [],
-          effectiveTime: "",
-          failureTime: "",
-          remark: "",
-          status: 0
-        };
-        this.$emit("on-confirm", this.floatParams);
+        this.$emit("on-confirm", false);
       }
     }
   }

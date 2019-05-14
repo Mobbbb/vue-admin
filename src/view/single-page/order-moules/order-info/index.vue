@@ -4,7 +4,16 @@
       <Row>        
         <Form class="formQueryStyle" inline="inline" :model="searchData" :label-width="75">
           <Col>
-            <FormItem label="业务类型">
+            <FormItem label="乘客姓名">
+              <Input clearable="clearable" v-model="searchData.passengerName" style="width:250px"></Input>
+            </FormItem>
+            <FormItem label="乘客手机号">
+              <Input clearable="clearable" v-model="searchData.passengerMobile" style="width:250px"></Input>
+            </FormItem>
+            <FormItem label="订单编号">
+              <Input clearable="clearable" v-model="searchData.orderNo" style="width:250px"></Input>
+            </FormItem>
+            <FormItem label="业务类型" v-show="isShowMore">
               <Select v-model="searchData.typeModule" style="width:250px" clearable>
                 <Option value="1">出租车</Option>
                 <Option value="2">专车</Option>
@@ -15,17 +24,11 @@
                 <!-- <Option value="7">搬家</Option> -->
               </Select>
             </FormItem>
-            <FormItem label="订单类型">
+            <FormItem label="订单类型" v-show="isShowMore">
               <Select v-model="searchData.typeTimeNew" style="width:250px" clearable>
                 <Option value="1">实时</Option>
                 <Option value="2">预约</Option>
               </Select>
-            </FormItem>
-            <FormItem label="乘客姓名">
-              <Input clearable="clearable" v-model="searchData.passengerName" style="width:250px"></Input>
-            </FormItem>
-            <FormItem label="乘客手机号" v-show="isShowMore">
-              <Input clearable="clearable" v-model="searchData.passengerMobile" style="width:250px"></Input>
             </FormItem>
             <FormItem label="司机ID" v-show="isShowMore">
               <Input clearable="clearable" v-model="searchData.uuid" style="width:250px"></Input>
@@ -38,9 +41,6 @@
             </FormItem>
             <FormItem label="司机手机号" v-show="isShowMore">
               <Input clearable="clearable" v-model="searchData.driverMobile" style="width:250px"></Input>
-            </FormItem>
-            <FormItem label="订单编号" v-show="isShowMore">
-              <Input clearable="clearable" v-model="searchData.orderNo" style="width:250px"></Input>
             </FormItem>
             <FormItem label="订单状态" v-show="isShowMore">
               <Select v-model="searchData.mainStatus" style="width:250px" clearable>
@@ -92,9 +92,9 @@
     </CustomColumns>
     -->
     <VTable
-      :total="total"
-      :current="current"
-      :pageSize="pageSize"
+      :total="pageData.total"
+      :current="pageData.current"
+      :pageSize="pageData.pageSize"
       :isLoading="isLoading"
       :parColumns="tableColumns"
       :parTableData="tableData"
@@ -131,7 +131,23 @@ export default {
   },
   mounted() {
     this.getTableColumns()
-    this.getList()
+    let isReload = this.$store.state.cache['order-info']
+    if(isReload){
+      Object.keys(this.searchData).forEach(key=>{
+        this.searchData[key] = ''
+        delete this.searchData[key]
+      })
+      this.pageData = {
+        total: 0,
+        current: 1,
+        pageSize: 10
+      }
+      this.getList()
+      this.$store.commit('switchCacheState',['order-info',false])
+    }else{
+      this.$store.commit('changeLoadingFlag', false)
+      this.tableData.length===0 && this.getList()
+    }
   },
   methods: {
     search: function(){
@@ -141,18 +157,22 @@ export default {
         }
       }
       delete this.searchData.createdTime
-      this.current = 1
+      this.pageData.current = 1
       this.getList()
     },
     reset: function(){
-      this.searchData = {}
-      this.current = 1
+      Object.keys(this.searchData).forEach(key=>{
+        this.searchData[key] = ''
+        delete this.searchData[key]
+      })
+      this.pageData.current = 1
       this.getList()
     },
     getList() {
+      let that = this
       let params = {
-        currPage: this.current,
-        pageSize: this.pageSize,
+        currPage: this.pageData.current,
+        pageSize: this.pageData.pageSize,
       };
       if(this.searchData) {
         Object.assign(params, this.searchData)
@@ -160,8 +180,12 @@ export default {
       this.$store.commit('changeLoadingFlag', true)
       orderList(params).then(res => {
         if (res.data.success) {
-          this.total = res.data.data.totalCount;
-          this.tableData = res.data.data.list;
+          this.pageData.total = res.data.data.totalCount;
+          this.tableData.splice(0,this.tableData.length)
+          res.data.data.list.forEach(item=>{
+            this.tableData.push(item)
+          })
+          // this.tableData = res.data.data.list;
         }
         this.$store.commit('changeLoadingFlag', false)
       })
@@ -224,11 +248,11 @@ export default {
       this.tableColumns = data;
     },
     changePageSize(val) {
-      this.pageSize = val;
+      this.pageData.pageSize = val;
       this.getList();
     },
     changePage (val) {
-      this.current = val;
+      this.pageData.current = val;
       this.getList();
     },
     createdTime(value) {
