@@ -171,3 +171,8 @@ body{
 .inline-box{
   display: inline-block;
 }
+.must-tag{
+  color:#ed4014;
+  display: inline-block;
+  margin-right: 3px;
+}

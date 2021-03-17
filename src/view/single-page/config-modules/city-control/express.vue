@@ -1,3 +1,4 @@
+<!--开通城市内容页面-->
 <template>
     <div class="container_box">
         <searchList :inputList="inputList" @on-search='queryList' @on-reset="handelReset"></searchList>
@@ -24,62 +25,36 @@
                         <span v-if="tabName==4">快车</span>
                         <span v-if="tabName==1">出租车</span>
                     </FormItem>
-                    <FormItem label="选择城市:" >
+                    <FormItem label="选择城市:">
                         <al-cascader
                             level="1"
                             ref="alCascader"
                             v-model="selectedCityL"
-                            style="width:190px" />
+                            style="width:190px"/>
                      </FormItem>
                  </Form>
                 <div slot='footer'>
                     <Button type="primary" @click="handleSaveCity">确定</Button>
                 </div>
             </Modal>
-        </div> 
-        <Modal v-model="showBsModal" @on-cancel="cancelModal" :mask-closable="false">
-            <BsStrategy  v-if="showBsModal" :wholeData = 'papaData' :typeModule='tabName'> </BsStrategy>
-            <div slot="footer">
-                <!-- <Button type="primary" @click="showBsModal=false">确定</Button> -->
-            </div>
-        </Modal>
-        <Modal v-model="showBdModal" @on-cancel="cancelbdModal" :mask-closable="false">
-            <badDebt 
-                v-if="showBdModal"
-                :isShow = 'showBdModal' 
-                :cityuuid = 'selectedCityUuid' 
-                :cityName = 'selectedCity' 
-                @modalClose = 'modalReci2'>  
-            </badDebt>
-            <div slot="footer"></div>
-        </Modal>
-        <Modal v-model="popDiscount" :width="700" title="折扣矩阵" :mask-closable="false" footer-hide>
-            <Discount @on-confirm="confirm" :tabName="tabName" :popView="popDiscount" :cityId="discountCityId"></Discount>
-        </Modal>
+        </div>
     </div>
 </template>
 
 <script>
-import BsStrategy from './components/bsStrategy.vue'
-import badDebt from './components/bad-debt.vue'
-import Discount from './components/discount.vue'
 import { cpTranslate } from '@/libs/tools'
-import { getModelsLeveList, updateCarModel ,addCity, turnoffCity, turnOnCity } from '@/api/configData.js'
+import { getModelsLeveList, addCity, turnoffCity, turnOnCity, checkedCityStatus } from '@/api/configData.js'
 import { getProvinceCityList } from '@/api/common.js'
+import { typeModuleMap } from '@/libs/status-map'
 
 export default {
     name:'express',
     props:{
         tabName: String
     },
-    components: {
-        BsStrategy,
-        badDebt,
-        Discount
-    },
     data () {
         return {
-            discountCityId: '',
+            typeModuleMap,
             inputList: [
                 {
                     name: 'cascader-input', // 文本输入框名
@@ -95,17 +70,9 @@ export default {
                     changeOnSelect: true
                 }
             ],
-            unScitylist: '',
             selectedCityL: [],
-            popDiscount: false, // 弹出折扣矩阵
-            addModal:false,
-            addCityForm:{},
-            showBsModal:false,
-            showBdModal:false,
-            papaData: {},
-            chinalist:{},
-            selectedCityUuid:'',
-            selectedCity: '',
+            addModal: false,    // 弹出开通城市弹窗
+            addCityForm: {},
             cityColumns:[
                 {
                     title:'城市名',
@@ -122,20 +89,8 @@ export default {
                     key:'status',
                     minWidth: 160,
                     render: (h,params) =>{
-                        if(params.row.status == 0){
-                            return h('div'),[
-                                h('span',{
-                                    
-                                },'未开通')
-                            ]
-                        }
-                        if(params.row.status ==1){
-                            return h('div'),[
-                                h('span',{
-
-                                },'已开通')
-                            ]
-                        }
+                        if(params.row.status == 0) return h('span', '未开通')
+                        if(params.row.status == 1) return h('span', '已开通')
                     }
                 },
                 {
@@ -145,11 +100,7 @@ export default {
                     render:(h,params) =>{
                         let x = params.row.updateTime
                         x = this.$moment(x).format('YYYY-MM-DD HH:mm:ss')
-                        return h('div'),[
-                            h('span',{
-
-                            },x)
-                        ]
+                        return h('span', x)
                     }
                 },
                 {
@@ -158,107 +109,147 @@ export default {
                     fixed: 'right',
                     width: 350,
                     render: (h, params) =>{
-                            return h('div'),[
-                                h('Button',{
-                                    props: {
-                                        type: 'error',
-                                        ghost: true,
-                                        size: 'small'
-                                    },
-                                    directives: [{
-                                        name: 'hasAuth',
-                                        value: 'city_control-update'
-                                    }],
-                                    style: {
-                                        display: params.row.status === 1 ? 'inline-block' : 'none'
-                                    },
-                                     on:{
-                                        click:() => {
-                                            let info = params.row
-                                            this.closeStra(info)
-                                        }
+                        return h('div'),[
+                            h('Button',{
+                                props: {
+                                    type: 'error',
+                                    ghost: true,
+                                    size: 'small'
+                                },
+                                directives: [{
+                                    name: 'hasAuth',
+                                    value: 'city_control-update'
+                                }],
+                                style: {
+                                    display: params.row.status === 1 ? 'inline-block' : 'none'
+                                },
+                                 on:{
+                                    click:() => {
+                                        let info = params.row
+                                        this.closeStra(info)
                                     }
-                                },'关闭'),
-                                h('Button',{
-                                    props: {
-                                        type: 'success',
-                                        ghost: true,
-                                        size: 'small'
-                                    },
-                                    directives: [{
-                                        name: 'hasAuth',
-                                        value: 'city_control-update'
-                                    }],
-                                    style: {
-                                        display: params.row.status === 0 ? 'inline-block' : 'none'
-                                    },
-                                    on:{
-                                        click:() => {
-                                            let info = params.row
+                                }
+                            },'关闭'),
+                            h('Button',{
+                                props: {
+                                    type: 'success',
+                                    ghost: true,
+                                    size: 'small'
+                                },
+                                directives: [{
+                                    name: 'hasAuth',
+                                    value: 'city_control-update'
+                                }],
+                                style: {
+                                    display: params.row.status === 0 ? 'inline-block' : 'none'
+                                },
+                                on: {
+                                    click: () => {
+                                        let info = params.row
+                                        let data = {
+                                            cityUuid: params.row.cityUuid,
+                                            typeModule: Number(this.tabName)
+                                        }
+                                        checkedCityStatus(data).then(res => {
                                             this.openStra(info)
-                                        }
+                                        })
                                     }
-                                },'开启'),
-                               h('Button',{
-                                    props: {
-                                        type: 'success',
-                                        ghost: true,
-                                        size: 'small'
-                                    },
-                                    directives: [{
-                                        name: 'hasAuth',
-                                        value: 'city_control-priceStrategy'
-                                    }],
-                                    style: {
-                                        marginLeft: '15px'
-                                    },
-                                    on: {
-                                        click :() =>{
-                                            this.showBsModel()
-                                            this.papaData = params.row
-
-                                        }
-                                    },
-                                },'定价策略'),
-                                h('Button',{
-                                    props: {
-                                        type: 'warning',
-                                        ghost: true,
-                                        size: 'small'
-                                    },
-                                    directives: [{
-                                        name: 'hasAuth',
-                                        value: 'city_control-badStrategy'
-                                    }],
-                                    style: {
-                                        marginLeft: '15px'
-                                    },
-                                    on: {click :() =>{
-                                            this.showBdModel(params.row)
-                                        }
+                                }
+                            },'开启'),
+                           h('Button',{
+                                props: {
+                                    type: 'success',
+                                    ghost: true,
+                                    size: 'small'
+                                },
+                                directives: [{
+                                    name: 'hasAuth',
+                                    value: 'city_control-priceStrategy'
+                                }],
+                                style: {
+                                    marginLeft: '15px'
+                                },
+                                on: {
+                                    click: () => {
+                                        this.$router.push({
+                                            name: 'city_control_operation',
+                                            query: {
+                                                tabType: '1',
+                                                city: params.row.city,
+                                                province: params.row.province,
+                                                status: params.row.status,
+                                                businessType: params.row.businessType,
+                                                uuid:  params.row.uuid,
+                                                cityId: params.row.cityId,
+                                                cityUuid: params.row.cityUuid
+                                            }
+                                        })
                                     }
-                                },'坏账策略'),
-                                h('Button',{
-                                    props: {
-                                        type: 'primary',
-                                        ghost: true,
-                                        size: 'small'
-                                    },
-                                    directives: [{
-                                        name: 'hasAuth',
-                                        value: 'city_control-discount'
-                                    }],
-                                    style: {
-                                        marginLeft: '15px'
-                                    },
-                                    on: {
-                                        click :() =>{
-                                            this.popDiscount = true
-                                            this.discountCityId = params.row.cityId
-                                        }
+                                },
+                            },'定价策略'),
+                            h('Button',{
+                                props: {
+                                    type: 'warning',
+                                    ghost: true,
+                                    size: 'small'
+                                },
+                                directives: [{
+                                    name: 'hasAuth',
+                                    value: 'city_control-badStrategy'
+                                }],
+                                style: {
+                                    marginLeft: '15px'
+                                },
+                                on: {
+                                    click: () => {
+                                        this.$router.push({
+                                            name: 'city_control_operation',
+                                            query: {
+                                                tabType: '2',
+                                                city: params.row.city,
+                                                province: params.row.province,
+                                                status: params.row.status,
+                                                businessType: params.row.businessType,
+                                                uuid:  params.row.uuid,
+                                                cityId: params.row.cityId,
+                                                cityUuid: params.row.cityUuid
+                                            }
+                                        })
                                     }
-                                },'折扣矩阵')
-                            ]                     
+                                }
+                            },'坏账策略'),
+                            h('Button',{
+                                props: {
+                                    type: 'primary',
+                                    ghost: true,
+                                    size: 'small'
+                                },
+                                directives: [{
+                                    name: 'hasAuth',
+                                    value: 'city_control-discount'
+                                }],
+                                style: {
+                                    marginLeft: '15px'
+                                },
+                                on: {
+                                    click: () => {
+                                        this.$router.push({
+                                            name: 'city_control_operation',
+                                            query: {
+                                                tabType: '3',
+                                                city: params.row.city,
+                                                province: params.row.province,
+                                                status: params.row.status,
+                                                businessType: params.row.businessType,
+                                                uuid:  params.row.uuid,
+                                                cityId: params.row.cityId,
+                                                cityUuid: params.row.cityUuid
+                                            }
+                                        })
+                                    }
+                                }
+                            },'折扣矩阵')
+                        ]                     
                     }
                 },
             ],
@@ -266,7 +257,7 @@ export default {
             totalCount: '',
             pageSize: 10,
             current: 1,
-            total:null
+            total: null
         }
     },
     created (){
@@ -274,81 +265,40 @@ export default {
         this.inputList[0].cascaderList = JSON.parse(localStorage.getItem('provinceCityList'))
     },
     methods:{
-        confirm: function(data){ // 保存折扣矩阵回调
-            if(data) this.getList()
-        },
         showAddModel (){
             this.selectedCityL = [] // 清空绑定的数据
             this.$refs.alCascader.select = [] // 清空页面上的展示数据
             this.addModal = true
         },
-        //开通城市
-        handleSaveCity () {
-            if(!this.selectedCityL.length) {
-                this.$Message.warning('请选择城市');
-                return
-            }
-            let type = '';
-            switch (this.tabName){
-                case '2' :
-                    type ='专车' ;
-                    break;
-                case '4' :
-                    type ='快车' ;
-                    break;
-                case '1' :
-                    type ='出租车' ;
-                    break;
-            }
-            let data ={
-                cityID: this.selectedCityL[1].code,
-                typeModule: Number(this.tabName)
-            }
-            this.$Modal.confirm({
-                title: '开通城市',
-                content: '确认开通' + this.selectedCityL[1].name + '的' + type + '业务吗',
-                onOk: () => {
-                    addCity(data).then(res =>{
-                        this.$Message.success('开通成功！');
-                        this.getList()
-                        this.getSavedCity()
-                        this.addModal = false
-                    })
-                },
-                onCancel: () => {
-                    this.$Message.info('已取消');
-                    /*this.selectedCityL = []
-                    this.$refs.alCascader.select = [] // 清空页面上的展示数据*/
+        handleSaveCity () { // 开通城市
+            if(this.selectedCityL.length === 0) {
+                this.$Message.warning('请选择城市')
+            } else if (this.selectedCityL.length === 1) {
+                this.$Message.warning('暂时无法开通台湾省')
+            } else {
+                let data ={
+                    cityID: this.selectedCityL[1].code,
+                    typeModule: Number(this.tabName)
                 }
-            })
+                this.$Modal.confirm({
+                    title: '开通城市',
+                    content: '确认开通' + this.selectedCityL[1].name + '的' + this.typeModuleMap[this.tabName] + '业务吗',
+                    onOk: () => {
+                        addCity(data).then(res =>{
+                            this.$Message.success('开通成功！')
+                            this.getList()
+                            this.getSavedCity()
+                            this.addModal = false
+                        })
+                    }
+                })
+            }
         },
-        cancelModal(){
-            this.showBsModal = false
-        },
-        cancelbdModal(){
-            this.showBsModal = false
-        },
-        showBsModel() {
-            this.showBsModal = true
-        },
-        showBdModel(val) {
-            this.showBdModal =true
-            this.selectedCityUuid = val.cityUuid
-            this.selectedCity = val.city
-        },
-        modalReci(val) {
-            this.showBsModal = val
-        },
-        modalReci2(val) {
-            this.showBdModal = val
-        },
-        //重置
-        handelReset(){
+        handelReset () { // 重置
             this.current = 1
             this.getList()
         },
-        //获取分页List
-        getList() {
+        getList () { // 获取分页List
             let ty = Number(this.tabName)
             let data = {typeModule: ty, currPage: this.current, pageSize: this.pageSize}
             this.$store.commit('changeLoadingFlag', true)
@@ -358,7 +308,7 @@ export default {
                 this.$store.commit('changeLoadingFlag', false)
             })
         },
-        getSavedCity(){
+        getSavedCity () {
             let data = { typeModule: Number(this.tabName) }
             getProvinceCityList(data).then(res =>{
                 let transformData = JSON.stringify(cpTranslate(res.data.data))
@@ -366,7 +316,7 @@ export default {
                 this.inputList[0].cascaderList = JSON.parse(localStorage.getItem('provinceCityList'))
             })
         },
-        queryList(res){
+        queryList (res) {
             let data ={
                 typeModule: Number(this.tabName),
                 provinceID: res.provinceID,
@@ -374,6 +324,7 @@ export default {
                 currPage: this.current, 
                 pageSize: this.pageSize
             }
+            this.$store.commit('changeLoadingFlag', true)
             getModelsLeveList(data).then(res=> {
                 this.cityData = res.data.data.list; 
                 this.total = res.data.data.totalCount;
@@ -381,7 +332,7 @@ export default {
             })
         },
         changePageSize(val){
-            this.pageSize = val;
+            this.pageSize = val
             this.getList()
         },
         changePage(val){
@@ -398,16 +349,10 @@ export default {
                 content: '<p>确认关闭此城市的业务？</p>',
                 onOk: () => {
                     turnoffCity(data).then( res=>{
-                        if(res.data.success){
-                            this.$Message.success('关闭成功');
-                        }else{
-                            this.$Message.error(res.data.data)
-                        }
+                        this.$Message.success('关闭成功')
                         this.getList()
+                        this.getSavedCity()
                     })
-                },
-                onCancel: () => {
-                    this.$Message.info('已取消操作');
                 }
             })
         },
@@ -421,16 +366,10 @@ export default {
                 content: '<p>确认开启此城市？</p>',
                 onOk: () => {
                     turnOnCity(data).then( res=>{
-                        if(res.data.success){
-                            this.$Message.success('开启成功');
-                        } else {
-                            this.$Message.error(res.data.data)
-                        }
+                        this.$Message.success('开启成功')
                         this.getList()
+                        this.getSavedCity()
                     })
-                },
-                onCancel: () => {
-                    this.$Message.info('已取消操作');
                 }
             })
         }

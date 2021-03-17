@@ -1,5 +1,5 @@
 <template>
-  <Button type="primary" :disabled="isDisabled" @click="exportFile" >数据导出</Button>
+  <Button type="primary" :disabled="isDisabled" @click="exportFile" >{{btnText}}</Button>
 </template>
 <script>
 import axios from 'axios';
@@ -38,6 +38,10 @@ import {getToken} from '@/libs/util.js';
       isDisabled: {
         type: Boolean,
         default: false
+      },
+      btnText:{
+        type: String,
+        default: '数据导出'
       }
     },
     data(){

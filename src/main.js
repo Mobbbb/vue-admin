@@ -5,6 +5,7 @@ import App from './App'
 import router from './router'
 import store from './store'
 import iView from 'iview'
+import {Cascader,DatePicker} from 'element-ui';
 import AMap from 'vue-amap'
 import iviewArea from 'iview-area'
 import moment from 'moment'
@@ -12,15 +13,18 @@ import i18n from '@/locale'
 import config from '@/config'
 import importDirective from '@/directive'
 import installPlugin from '@/plugin'
+import {formatAmount} from '@/libs/util.js';
 import VTable from '_a/v-table/v-table'
 import SearchList from '_a/search-list/search-list'
 import 'iview/dist/styles/iview.css'
 import './index.less'
 import '@/assets/icons/iconfont.css'
+import 'element-ui/lib/theme-chalk/index.css';
+import ElementLocale from 'element-ui/lib/locale'
+
 // 实际打包时应该不引入mock,
 /* eslint-disable */
-// if (process.env.NODE_ENV !== 'production') require('@/mock')
-require('@/mock')
+if (process.env.NODE_ENV !== 'production') require('@/mock')
 
 /**
  * @description 注册admin内置插件
@@ -34,17 +38,23 @@ const customPlugins = {
   install: function(Vue){
     Vue.component('VTable', VTable)
     Vue.component('SearchList', SearchList)
+    Vue.component('elCascader', Cascader)
   }
 }
+Vue.prototype.formatAmount = formatAmount;
 Vue.use(customPlugins) // 全局注册自定义组件
 Vue.use(iviewArea)
 Vue.use(iView, { i18n: (key, value) => i18n.t(key, value) })
 Vue.use(AMap)
+// element datePicker&国际化
+Vue.use(DatePicker)
+ElementLocale.i18n((key, value) => i18n.t(key, value))
+
 AMap.initAMapApiLoader({
   // 高德的key
   key: '7333fda4f079977bb5596730631c7075',
   // 插件集合
-  plugin: ['AMapManager', 'AMap.Autocomplete', 'AMap.PlaceSearch', 'AMap.Scale', 'AMap.OverView', 'AMap.ToolBar', 'AMap.MapType', 'AMap.PolyEditor', 'AMap.CircleEditor','Geocoder','Geolocation', 'AMap.MarkerClusterer','AMap.PolyEditor', 'AMap.CircleEditor', 'AMap.MouseTool', 'AMap.Driving', 'AMap.CitySearch', 'AMap.InfoWindow', 'AMap.LngLat', 'AMap.DistrictSearch', 'AMap.TileLayer.Traffic', 'AMap.Heatmap'],
+  plugin: ['AMapManager', 'AMap.Autocomplete', 'AMap.PlaceSearch', 'AMap.Scale', 'AMap.OverView', 'AMap.ToolBar', 'AMap.MapType', 'AMap.PolyEditor', 'AMap.CircleEditor','Geocoder','Geolocation', 'AMap.MarkerClusterer','AMap.PolyEditor', 'AMap.CircleEditor', 'AMap.MouseTool', 'AMap.Driving', 'AMap.CitySearch', 'AMap.InfoWindow', 'AMap.LngLat', 'AMap.DistrictSearch', 'AMap.TileLayer.Traffic', 'AMap.Heatmap', 'AMap.Autocomplete', 'AMap.PlaceSearch'],
   // 高德 sdk 版本，默认为 1.4.4
   v: '1.4.4'
 })
@@ -53,7 +63,7 @@ AMap.initAMapApiLoader({
  * @description 上传图片用url
  */
 const baseUrl = process.env.NODE_ENV === 'development' ? config.baseUrl.dev : config.baseUrl.pro
-Vue.prototype._baseUrl = baseUrl + '/t3-admin'
+Vue.prototype._baseUrl = baseUrl + '/vue-admin'
 /**
  * @description 时间格式化工具
  */

@@ -55,19 +55,19 @@ export const fields = {
     width: 130
   },
   nickName: {
-    title: '乘客昵称',
+    title: '下单人昵称',
     key: 'nickName',
     tooltip: true,
     width: 130
   },
   passengerName: {
-    title: '乘客姓名',
+    title: '下单人姓名',
     key: 'passengerName',
     tooltip: true,
     width: 130
   },
   passengerMobile: {
-    title: '乘客手机号',
+    title: '下单人手机号',
     key: 'passengerMobile',
     tooltip: true,
     width: 130
@@ -147,7 +147,7 @@ export const wayRecords = [
     }
   },
   {
-    title: '途径点1',
+    title: '途经点1',
     key: 'passing0',
     minWidth: 120,
     tooltip: true
@@ -397,8 +397,8 @@ export const orderRightData = [
     title: '司乘&车辆信息',
     key: 'driverInfo',
     value: [
-      { name: "乘客姓名", key: "passengerName", span: '12', value: '', link: 'passenger', uuid: '' },
-      { name: "乘客手机号", key: "passengerMobile", span: '12', value: '' },
+      { name: "下单人姓名", key: "passengerName", span: '12', value: '', link: 'passenger', uuid: '' },
+      { name: "下单人手机号", key: "passengerMobile", span: '12', value: '' },
       { name: "乘车人姓名", key: "actualPassengerName", span: '12', value: '' },
       { name: "乘车人手机号", key: "actualPassengerMobile", span: '12', value: '' },
       { name: "司机姓名", key: "actualDriverName", span: '12', value: '', link: 'driver', uuid: '' },
@@ -435,5 +435,5 @@ export const showMap = {
       'arriveDest', 'cost', 'pay', 'basicInfo', 'driverInfo'],
   8: ['placeOrder','distributOrder', 'receiveOrder', 'beginService', 'arriveBoard', 'passengerAboard', 'passingPoints', 
       'arriveDest', 'cost', 'pay', 'firstEvaluate', 'basicInfo', 'driverInfo'],
-  9: ['placeOrder', 'beginService', 'basicInfo', 'cancelInfo']
+  9: ['placeOrder', 'distributOrder', 'receiveOrder', 'beginService', 'basicInfo', 'driverInfo', 'cancelInfo']
 }

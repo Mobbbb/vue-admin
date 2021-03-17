@@ -74,7 +74,7 @@
         </Modal>
         <Modal
             footer-hide
-            :width="515"
+            :width="800"
             :mask-closable="false"
             v-model="popMap"
             title="地图查看">
@@ -115,28 +115,22 @@ export default {
             cancelTypeMap,
             typeModuleMap,
             orderLeftData: [],
-            orderRightData: [],
-            beforeChangeFare: {},
+            orderRightData: []
         };
     },
+    watch: {
+        '$route.params.id' () {
+            this.orderLeftData = {...orderLeftData}
+            this.orderRightData = {...orderRightData}
+            this.getDetailInfo()
+        }
+    },
     mounted() {
-        this.orderLeftData = JSON.parse(JSON.stringify(orderLeftData))
-        this.orderRightData = JSON.parse(JSON.stringify(orderRightData))
+        this.orderLeftData = {...orderLeftData}
+        this.orderRightData = {...orderRightData}
         this.getDetailInfo()
     },
     methods: {
-        /*getAdjustData: function(item) {
-            let key = item.key.substring(0, 1).toUpperCase() + item.key.substring(1)
-            if (typeof item.changeKey !== "undefined") {
-                if (
-                    this.beforeChangeFare[item.changeKey + key] !== "" &&
-                    this.beforeChangeFare[item.changeKey + key] !== null &&
-                    typeof this.beforeChangeFare[item.changeKey + key] !== "undefined"
-                ) {
-                    return this.beforeChangeFare[item.changeKey + key]
-                } else return ""
-            } else return ""
-        },*/
         getTableColumns (map) {
             this.orderLeftData = []
             this.orderRightData = []
@@ -160,32 +154,55 @@ export default {
                 let lengthRight = data.passingPointDtos && data.passingPointDtos.length || 0 // 右侧途经点长度
 
                 this.getTableColumns(orderTableMap) // 获取左侧table展示项
+                let tempData = JSON.parse(JSON.stringify(this.orderRightData)) // 深度克隆（不可使用...数组解构）
 
                 for(let i = 0; i < this.orderLeftData.length; i++){
                     if(this.orderLeftData[i].key === 'passingPoints') {
-                        this.orderLeftData.splice(i + lengthLeft, 3 - lengthLeft) // 左侧删除途经点
+                        this.orderLeftData.splice(i + lengthLeft, 3 - lengthLeft) // 左侧删除空途经点
                         break
                     }
                 }
-                this.orderRightData[0].value.forEach((item, index) => {
+                
+                tempData[0].value.forEach((item, index) => {
                     if(item.key === 'address0') {
-                        this.orderRightData[0].value.splice(index + lengthRight, 3 - lengthRight) // 右侧删除途经点
+                        tempData[0].value.splice(index + lengthRight, 3 - lengthRight) // 右侧删除空途经点
                     }
                 })
 
                 if(data.typeTime === 1 || data.typeTime === null) { // 实时用车
-                    this.orderRightData[0].value.forEach((item, index) => {
-                        if(item.key === 'departTime') this.orderRightData[0].value.splice(index, 1) // 右侧删除预约用车时间
+                    tempData[0].value.forEach((item, index) => {
+                        if(item.key === 'departTime') {
+                            tempData[0].value.splice(index, 1) // 右侧删除预约用车时间
+                        }
                     })
                 }
+                this.orderRightData = JSON.parse(JSON.stringify(tempData)) // 触发更新（不可使用...数组解构）
                 
-                data.orderCarHistoryStatusList.forEach(item => {
+                data.orderCarHistoryStatusList.forEach(item => { // 检查是否有开始服务字段
                     if(item.type === 'start_service_msg') temp = true // 有开始服务字段
                 })
                 if(!temp) { // 若无开始服务字段
                     this.orderLeftData.forEach((item, index) => {
                         if(item.key === 'beginService') this.orderLeftData.splice(index, 1) // 左侧删除开始服务栏
                     })
+                }
+
+                if(data.mainStatus === 9){ // 行程取消的订单
+                    if(data.actualDriverUuid === null || data.actualDriverUuid === '') { // 若司机未接过单(查询不到司机)
+                        for(let i = 0; i < this.orderLeftData.length; i++){
+                            if(this.orderLeftData[i].key === 'distributOrder') { // 左侧删除派单栏
+                                this.orderLeftData.splice(i, 1)
+                                i --
+                            }
+                            if(this.orderLeftData[i].key === 'receiveOrder') {
+                                this.orderLeftData.splice(i, 1)     // 左侧删除接单栏
+                                i --
+                            }
+                        }
+                        this.orderRightData.forEach((item, index) => {
+                            if(item.key === 'driverInfo') this.orderRightData.splice(index, 1) // 右侧删除司机信息栏
+                        })
+                    }
                 }
 
                 this.orderRightData.forEach(item => { // 途经点(右侧)处理
@@ -303,7 +320,16 @@ export default {
                     })
                 }
             } else if (params.link === 'driver') {
-                this.$Message.warning('暂无司机信息') 
+                if(params.uuid === '' || typeof(params.uuid) === 'undefined' || params.uuid === null) {
+                    this.$Message.warning('暂无司机信息')
+                } else {
+                    this.$router.push({
+                        name: 'staff-detail',
+                        params: {
+                            id: params.uuid
+                        }
+                    })
+                } 
             } else {
                 console.log('通知前端！！')
             }

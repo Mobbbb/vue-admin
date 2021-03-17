@@ -314,15 +314,18 @@ export const columnOrder = (that) => {
       ellipsis: true,
       minWidth: 60,
       render: (h, params) => {
-        let num = params.row.uuid;
+        let num = params.row.routeUuid || null
         let orderNo = params.row.orderNo;
         return h('a', {
           on: {
             click: () => {
-              that.$router.push({
-                name: 'order-detail',
-                params: { id: num }
-              })
+              if(num === null) that.$Message.warning('routeUuid不得为空')
+              else {
+                that.$router.push({
+                  name: 'order-detail',
+                  params: { id: num }
+                })
+              }
             }
           }
         }, orderNo)

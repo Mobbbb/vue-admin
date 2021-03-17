@@ -16,7 +16,7 @@ export const login = ({ userName, password }) => {
     scope: 'all'
   }
   return loginAxios.request({
-    url: '/security-authentication-api/oauth/login',
+    url: '/mock_login',
     data: qs.stringify(data),
     method: 'post',
     headers: {

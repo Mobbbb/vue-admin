@@ -2,12 +2,12 @@
   <div>
     <div class="order">
       <Row>        
-        <Form class="formQueryStyle" inline="inline" :model="searchData" :label-width="75">
+        <Form class="formQueryStyle" inline="inline" :model="searchData" :label-width="85">
           <Col>
-            <FormItem label="乘客姓名">
+            <FormItem label="下单人姓名">
               <Input clearable="clearable" v-model="searchData.passengerName" style="width:250px"></Input>
             </FormItem>
-            <FormItem label="乘客手机号">
+            <FormItem label="下单人手机号">
               <Input clearable="clearable" v-model="searchData.passengerMobile" style="width:250px"></Input>
             </FormItem>
             <FormItem label="订单编号">
@@ -29,9 +29,6 @@
                 <Option value="1">实时</Option>
                 <Option value="2">预约</Option>
               </Select>
-            </FormItem>
-            <FormItem label="司机ID" v-show="isShowMore">
-              <Input clearable="clearable" v-model="searchData.uuid" style="width:250px"></Input>
             </FormItem>
             <FormItem label="车牌号" v-show="isShowMore">
               <Input clearable="clearable" v-model="searchData.plateNum" style="width:250px"></Input>
@@ -132,31 +129,29 @@ export default {
   mounted() {
     this.getTableColumns()
     let isReload = this.$store.state.cache['order-info']
-    if(isReload){
-      Object.keys(this.searchData).forEach(key=>{
+    if (isReload) {
+      Object.keys(this.searchData).forEach(key => {
         this.searchData[key] = ''
         delete this.searchData[key]
       })
-      this.pageData = {
-        total: 0,
-        current: 1,
-        pageSize: 10
-      }
       this.getList()
       this.$store.commit('switchCacheState',['order-info',false])
-    }else{
+    } else {
       this.$store.commit('changeLoadingFlag', false)
       this.tableData.length===0 && this.getList()
     }
   },
   methods: {
     search: function(){
+      this.searchData.createdTime = this.searchData.createdTime || ['', '']
       for(let item in this.searchData){
         if(this.searchData[item] === '' || this.searchData[item] === null){
           delete this.searchData[item]
         }
       }
-      delete this.searchData.createdTime
+      if(this.searchData.createdTime[0] === '' || this.searchData.createdTime[1] === '') {
+        delete this.searchData.createdTime
+      }
       this.pageData.current = 1
       this.getList()
     },

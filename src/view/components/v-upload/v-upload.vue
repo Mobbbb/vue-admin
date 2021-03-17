@@ -107,6 +107,7 @@ export default {
       const i = this.$refs.upload.fileList.indexOf(file);
       this.uploadListArr.splice(i, 1);
       this.$refs.upload.fileList.splice(i,1);
+      this.$emit('on-remove')
     },
     handleSuccess (res, file) {
       if (res.success) {

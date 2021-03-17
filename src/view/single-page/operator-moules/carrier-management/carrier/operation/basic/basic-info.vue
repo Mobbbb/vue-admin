@@ -18,7 +18,7 @@
             </Row>
             <Row class="carrier-header-content">
                 <Col span="6" class="basic-title">
-                    <span>运营商账号：</span><span>{{carrierInfo.accountNumber}}</span>
+                    <span>运营商账号：</span><span>{{carrierInfo.accountNumber || '暂无'}}</span>
                 </Col>
                 <Col span="6" class="basic-title" v-for="(item, index) in carrierInfo.mobileList" :key="index">
                     <span>电话{{index + 1}}：</span><span>{{item.area}} - {{item.number}}</span>
@@ -30,7 +30,7 @@
                 </Col>
             </Row>
         </div>
-        <div class="basic-header-wrap">
+        <!--<div class="basic-header-wrap">
             <div class="basic-header">
                 <div class="carrier-header-title">考核规则：</div>
                 <div v-if="isEdit">
@@ -62,8 +62,8 @@
                         </th>
                         <th>0</th><th>0.6</th><th>0.8</th><th>1</th><th>1.2</th>
                     </tr>
-                    <tr v-for="(item, index) in config">
-                        <!-- index: 行号，temp: 列号 -->
+                    <tr v-for="(item, index) in config">-->
+                        <!-- index: 行号，temp: 列号 --><!--
                         <td>{{index + 1}}</td>
                         <td>{{item.assessment}}</td>
                         <td v-for="(i, temp) in item.lineValue">
@@ -137,7 +137,7 @@
                     </tr>
                 </table>
             </Form>
-        </div>
+        </div>-->
         <Modal v-model="isPopPrepare" title="考核结果查看" :mask-closable="false" :width="350" footer-hide>
             <PopView :config="config" :popView="isPopPrepare" :carrierInfo="carrierInfo" @on-confirm="confirm"></PopView>
         </Modal>

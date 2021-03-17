@@ -76,6 +76,7 @@ export default {
     watch: {
         'value': function(){
             this.selectLists = selectItemByIds(this.data, this.value)
+            this.cancelChecked('') // 初始化勾选项
         },
         'data': function(){
             this.init()
@@ -120,7 +121,7 @@ export default {
             if(ids.length) this.showPlaceholder = false
             else this.showPlaceholder = true
             this.$emit('input', getIntersection(this.leavesNode, ids))
-            this.$emit('on-change', getIntersection(this.leavesNode, ids))
+            this.$emit('on-change', getIntersection(this.leavesNode, ids), item)
         },
         cancelChecked: function(id){
             let arr = JSON.parse(JSON.stringify(this.originalData))
@@ -190,6 +191,7 @@ export default {
         
     }
     .multiple-tree-select-placeholder{
+        line-height: 24px;
         color: #c5c8ce;
     }
     .tree-drop{

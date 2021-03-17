@@ -49,7 +49,7 @@
                 <span>{{detailInfo.creator}}</span>
             </FormItem>
             <FormItem label="创建时间：">
-                <span>{{detailInfo.createdTime}}</span>
+                <span>{{detailInfo.createTime}}</span>
             </FormItem>
             <FormItem label="撤销人：" v-if="detailInfo.updater !== '' && detailInfo.updater !== null">
                 <span>{{detailInfo.updater}}</span>

@@ -3,6 +3,8 @@
         <Table
             border
             stripe
+            highlight-row
+            ref="vtable"
             v-if="!getLoadingFlag"
             :width="width"
             :height="height"
@@ -10,7 +12,12 @@
             :data="parTableData"
             :no-data-text="nodatatext"
             @on-sort-change="sortChange"
-            @on-selection-change="onSelect">
+            @on-selection-change="onSelect"
+            @on-row-click="onRowClick">
+            >
+            <template slot-scope="params" :slot="item.slot" v-for="item in parColumns">
+                <slot :name="item.slot" :data="params"></slot>
+            </template>
         </Table>
         <div v-else :style="{ height: height + 'px'}" class="table-spin-wrap">
             <Spin fix>
@@ -92,6 +99,12 @@ export default {
         },
         onSelect (obj) {
             this.$emit('selectHandle', obj);
+        },
+        onRowClick (obj) {
+            this.$emit('rowClickHandle', obj);
+        },
+        handelSelectAll(status){
+            this.$refs.vtable.selectAll(status);
         }
     }
 }

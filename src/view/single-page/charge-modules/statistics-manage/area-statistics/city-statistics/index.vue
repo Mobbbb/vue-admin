@@ -54,7 +54,7 @@
 </template>
 <script>
 import areaCascader from "../../../charge-station-manage/components/area-cascader.vue";
-import graycar from "@/assets/images/carstatus/grey.png";
+import white from "@/assets/images/carstatus/white.png";
 export default {
   name: "regionalStatistics",
   components: {

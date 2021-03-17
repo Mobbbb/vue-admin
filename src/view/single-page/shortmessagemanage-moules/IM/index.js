@@ -40,11 +40,7 @@ export const Columns = (that) => {
         deviceTime: {
             title: '更新时间',
             width: 160,
-            key: 'createdOn',
-            render: (h, params) => {
-                let titles = params.row.createdOn
-                return h('div', titles)
-            }
+            key: 'updatedOn'
         },
         action: {
             title: '操作',

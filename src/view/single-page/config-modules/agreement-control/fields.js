@@ -1,111 +1,72 @@
+export const protocolNameMap = {
+  1: '乘客用户协议',
+  2: '司机用户协议'
+}
+
+export const updateRuleMap = {
+  1: '强制更新'
+}
+
 /* 公共服务-会员服务-账号基本信息 */
 export const returnFields = (that) => {
-  return {
-    idxs: {
+  return [
+    {
       title: '序号',
-      key: 'idxs',
-      ellipsis: true,
+      key: 'index',
       tooltip: true,
-      width: 70
+      width: 70,
+      slot: 'index'
     },
-    uuid: {
+    {
       title: '协议ID',
       key: 'uuid',
-      ellipsis: true,
       tooltip: true,
       minWidth: 270
     },
-    protocolName: {
-      title: '协议名称',
+    {
+      title: '协议类型',
       key: 'protocolName',
-      ellipsis: true,
       tooltip: true,
-      minWidth: 120
+      minWidth: 120,
+      render: (h, params) => {
+        return h('span', protocolNameMap[params.row.protocolName])
+      }
     },
-    protocolVersion: {
-      title: '协议版本',
-      key: 'protocolVersion',
-      ellipsis: true,
-      tooltip: true,
-      minWidth: 120
-    },
-    updateRule: {
-      title: '更新机制(强制更新)',
+    {
+      title: '更新机制',
       key: 'updateRule',
-      ellipsis: true,
       tooltip: true,
       minWidth: 190,
       render: (h, params) => {
-        let titles = params.row.updateRule == 1 ?'是':params.row.updateRule == 0?'否': '暂无'
-        return h('div', titles)
+        return h('div', updateRuleMap[params.row.updateRule])
       }
     },
-    protocolLink: {
-      title: '资源地址',
+    {
+      title: '协议链接',
       key: 'protocolLink',
-      ellipsis: true,
       tooltip: true,
       minWidth: 220
     },
-    updatedOn: {
-      title: '更新时间',
-      key: 'updateTime',
-      ellipsis: true,
+    {
+      title: '创建时间',
+      key: 'createTime',
       tooltip: true,
       minWidth: 220
     },
-    updatedBy: {
-      title: '最后更新人',
-      key: 'updater',
+    {
+      title: '创建人',
+      key: 'creator',
       ellipsis: true,
       tooltip: true,
       minWidth: 140
     },
-    action: {
+    {
       title: '操作',
       key: 'action',
       fixed: 'right',
-      width: 140,
+      width: 90,
       render: (h, params) => {
         return h('div', [
-          h('Button', {
-            props: {
-              type: "warning",
-              ghost: true,
-              size: "small"
-            },
-            'class':{
-                tableBtn: true
-            },
-            directives: [{
-              name: 'hasAuth',
-              value: 'agreement_control-edit'
-            }],
-            on: {
-              click: () => {
-                let addparams = that.addparams
-                let paramsrow = params.row
-                let uuid = paramsrow.uuid
-                for (let key in addparams) {
-                  addparams[key] = paramsrow[key]
-                }
-                addparams['protocolName'] = addparams.protocolName == '乘客端' ? '1' : '2'
-                addparams.updateRule = params.row.updateRule == 1 ?true:false
-                addparams.uuid = uuid
-                that.controlbtn = {
-                  savebtn: false,
-                  updatebtn: true
-                }
-                if (!addparams.protocolLink) {
-                  addparams.protocolLink = '暂无'
-                }
-                that.addparams = addparams
-                that.modaltitle = '编辑'
-                that.editorModal = true
-                that.newMobel = true
-              }
-            }
-          }, '编辑'),
           h('Button', {
             props: {
               type: "info",
@@ -122,9 +83,9 @@ export const returnFields = (that) => {
                 that.protocolLink = params.row.protocolLink
               }
             }
-          }, '查看')
+          }, '详情')
         ])
       }
     }
-  }
+  ]
 }

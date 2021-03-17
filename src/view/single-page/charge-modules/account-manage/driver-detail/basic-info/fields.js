@@ -23,7 +23,7 @@ export const returnFields = (that) => {
       render: (h, params) => {
         switch (Number(params.row.payOrderType)) {
           case 1:
-            return h('div', 'T3充值')
+            return h('div', '企业充值')
           case 2:
             return h('div', '个人充值')
           default:
@@ -70,7 +70,7 @@ export const inputList = [
       },
       {
         value: 1,
-        label: "T3充值"
+        label: "企业充值"
       },
       {
         value: 2,

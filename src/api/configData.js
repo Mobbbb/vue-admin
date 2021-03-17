@@ -78,6 +78,15 @@ export const turnOnCity = (data) => {
   })
 }
 
+// 检查城市是否可以开启
+export const checkedCityStatus = (data) => {
+  return axios.request({
+    url: '/config/carModelsLevel/openCityCondition',
+    data,
+    method: 'post'
+  })
+}
+
 // 获取当前城市的坏账策略
 export const getBdStrategy = (data) => {
   return axios.request({
@@ -729,6 +738,172 @@ export const updateFaceStatus = data => {
 export const switchDevice = data => {
   return axios.request({
     url: '/admin/orderEquipment/switchDevice' ,
+    data,
+    method: 'post'
+  })
+}
+
+
+// 营销策略
+// 取消策略列表
+export const axiosCancelStrategyList = data => {
+  return axios.request({
+    url: '/admin/cancelStrategy/list' ,
+    data,
+    method: 'post'
+  })
+}
+// 强制下线
+export const axiosForcedOffline = data => {
+  return axios.request({
+    url: '/admin/driver/forcedOffline' ,
+    data,
+    method: 'post'
+  })
+}
+// 取消策略新增
+export const axiosCancelStrategySave = data => {
+  return axios.request({
+    url: '/admin/cancelStrategy/save' ,
+    data,
+    method: 'post'
+  })
+}
+// 取消策略编辑
+export const axiosCancelStrategyUpdate = data => {
+  return axios.request({
+    url: '/admin/cancelStrategy/update' ,
+    data,
+    method: 'post'
+  })
+}
+// 取消策略详情
+export const axiosCancelStrategyInfo = data => {
+  return axios.request({
+    url: '/admin/cancelStrategy/info' ,
+    data,
+    method: 'post'
+  })
+}
+export const axiosAlarmStrategyList = data => {
+  return axios.request({
+    url: '/admin/alarmStrategy/list' ,
+    data,
+    method: 'post'
+  })
+}
+// 偏离报警策略新增
+export const axiosAlarmStrategySave = data => {
+  return axios.request({
+    url: '/admin/alarmStrategy/save' ,
+    data,
+    method: 'post'
+  })
+}
+// 偏离报警策略编辑
+export const axiosAlarmStrategyUpdate = data => {
+  return axios.request({
+    url: '/admin/alarmStrategy/update' ,
+    data,
+    method: 'post'
+  })
+}
+// 偏离报警策略详情
+export const axiosAlarmStrategyInfo = data => {
+  return axios.request({
+    url: '/admin/alarmStrategy/info' ,
+    data,
+    method: 'post'
+  })
+}
+// 偏离报警策略删除
+export const axiosAlarmStrategyDelete = data => {
+  return axios.request({
+    url: '/admin/alarmStrategy/delete' ,
+    data,
+    method: 'post'
+  })
+}
+// 时间段及高峰策略列表
+export const axiosTimeStrategyList = data => {
+  return axios.request({
+    url: '/admin/timeStrategy/list' ,
+    data,
+    method: 'post'
+  })
+}
+// 时间段及高峰策略新增
+export const axiosTimeStrategySave = data => {
+  return axios.request({
+    url: '/admin/timeStrategy/save' ,
+    data,
+    method: 'post'
+  })
+}
+// 时间段及高峰策略编辑
+export const axiosTimeStrategyUpdate = data => {
+  return axios.request({
+    url: '/admin/timeStrategy/update' ,
+    data,
+    method: 'post'
+  })
+}
+// 时间段及高峰策略详情
+export const axiosTimeStrategyInfo = data => {
+  return axios.request({
+    url: '/admin/timeStrategy/info' ,
+    data,
+    method: 'post'
+  })
+}
+// 时间段及高峰策略删除
+export const axiosTimeStrategyDelete = data => {
+  return axios.request({
+    url: '/admin/timeStrategy/delete' ,
+    data,
+    method: 'post'
+  })
+}
+
+
+// 审批管理
+// 审批管理列表
+export const axiosTaskApprovalList = data => {
+  return axios.request({
+    url: '/admin/taskApproval/queryPage' ,
+    data,
+    method: 'post'
+  })
+}
+// 审批通过
+export const axiosTaskApprovalSwitch = data => {
+  return axios.request({
+    url: '/admin/taskApproval/approvalUpdate' ,
+    data,
+    method: 'post'
+  })
+}
+// 审批详情
+export const axiosTaskApprovalDetail = data => {
+  return axios.request({
+    url: '/admin/taskApproval/detail' ,
+    data,
+    method: 'post'
+  })
+}
+// 允许上线
+export const axiosAllowOnline = data => {
+  return axios.request({
+    url: '/admin/driver/allowOnline' ,
+    data,
+    method: 'post'
+  })
+}
+
+// 车辆gps
+export const axiosCarGPSData = data => {
+  return axios.request({
+    url: '/car/historyTrajectory/historyTrajectory' ,
     data,
     method: 'post'
   })

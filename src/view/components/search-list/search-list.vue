@@ -108,7 +108,7 @@
           :style="{'width': item.inputWidth + 'px'}"
           :data="item.cascaderList"
           v-model="item.value"
-          :change-on-select="typeof(item.changeOnSelect) === 'undefined' ? item.changeOnSelect : false">
+          :change-on-select="item.changeOnSelect ? item.changeOnSelect : false">
         </Cascader>
       </div>
       <div class="text-input" v-if="item.name === 'text-input'">
@@ -118,6 +118,7 @@
           v-model="item.value"
           :placeholder="item.placeholder"
           class="search-input"
+          @on-change="selectOrInput"
           :style="{'width': item.inputWidth + 'px'}"/>
       </div>
       <div class="text-input" v-if="item.name === 'number-input'">
@@ -129,6 +130,7 @@
           class="search-input"
           @on-keyup="change_number(item.value,index)"
           @on-blur="change_number(item.value,index)"
+          @on-change="selectOrInput"
           :style="{'width': item.inputWidth + 'px'}"/>
       </div>
       <div class="text-input" v-if="item.name === 'drop-input'">
@@ -140,6 +142,7 @@
           class="search-input"
           :placeholder="item.placeholder"
           :style="{'width': item.inputWidth + 'px'}"
+          @on-change="selectOrInput"
           v-if="typeof(item.value_key) === 'undefined' || typeof(item.label_key) === 'undefined'">
           <Option
             v-for="dropItem in item.dropList"
@@ -154,6 +157,7 @@
           v-else
           v-model="item.value"
           class="search-input"
+          @on-change="selectOrInput"
           :placeholder="item.placeholder"
           :style="{'width': item.inputWidth + 'px'}">
           <Option
@@ -172,6 +176,7 @@
           :placeholder="item.placeholder"
           :ref="item.bind_key"
           :remote-method="item.remoteMethod"
+          @on-change="selectOrInput"
           class="search-input"
           v-model="item.value"
           remote
@@ -191,7 +196,8 @@
           :options="item.options||{}"
           :ref="item.bind_key"
           :placeholder="item.placeholder"
-          :style="{'width': item.inputWidth + 'px'}">
+          :style="{'width': item.inputWidth + 'px'}"
+          @on-change="selectOrInput">
         </DatePicker>
       </div>
       <div class="text-input" v-if="item.name === 'date'">
@@ -204,7 +210,8 @@
           v-model="item.value"
           :ref="item.bind_key"
           :placeholder="item.placeholder"
-          :style="{'width': item.inputWidth + 'px'}">
+          :style="{'width': item.inputWidth + 'px'}"
+          @on-change="selectOrInput">
         </DatePicker>
       </div>
       <div class="text-input" v-if="item.name === 'date-time-input'">
@@ -213,10 +220,11 @@
           clearable
           type="datetimerange"
           class="search-input"
-          placement="bottom-start"
+          placement="bottom-end"
           v-model="item.value"
           :ref="item.bind_key"
           :placeholder="item.placeholder"
+          :format="item.format && item.format || 'yyyy-MM-dd HH:mm'"
           :style="{'width': item.inputWidth + 'px'}">
         </DatePicker>
       </div>
@@ -230,7 +238,8 @@
           v-model="item.value"
           :ref="item.bind_key"
           :placeholder="item.placeholder"
-          :style="{'width': item.inputWidth + 'px'}">
+          :style="{'width': item.inputWidth + 'px'}"
+          @on-change="selectOrInput">
         </DatePicker>
       </div>
       <div class="text-input" v-if="item.name === 'month-input'">
@@ -244,7 +253,8 @@
           :options="item.options||{}"
           :ref="item.bind_key"
           :placeholder="item.placeholder"
-          :style="{'width': item.inputWidth + 'px'}">
+          :style="{'width': item.inputWidth + 'px'}"
+          @on-change="selectOrInput">
         </DatePicker>
       </div>
       <div class="text-input" v-if="item.name === 'year-input'">
@@ -257,7 +267,8 @@
           v-model="item.value"
           :ref="item.bind_key"
           :placeholder="item.placeholder"
-          :style="{'width': item.inputWidth + 'px'}">
+          :style="{'width': item.inputWidth + 'px'}"
+          @on-change="selectOrInput">
         </DatePicker>
       </div>
       <div class="text-input" v-if="item.name === 'section-input'">
@@ -268,7 +279,8 @@
           :min="0"
           :placeholder="item.placeholder"
           :style="{'width': item.inputWidth + 'px'}"
-          v-model="item.value1">
+          v-model="item.value1"
+          @on-change="selectOrInput">
         </InputNumber>
         <span class="section-hr">-</span>
         <InputNumber
@@ -277,7 +289,8 @@
           :min="0"
           :placeholder="item.placeholder"
           :style="{'width': item.inputWidth + 'px'}"
-          v-model="item.value2">
+          v-model="item.value2"
+          @on-change="selectOrInput">
         </InputNumber>
       </div>
     </div>
@@ -452,6 +465,9 @@ export default {
       let data = this.getSearchData()
       this.$store.commit('changeLoadingFlag', true)
       this.$emit('on-search', data)
+    },
+    selectOrInput (data) {
+      this.$emit('on-change', data)
     }
   }
 }

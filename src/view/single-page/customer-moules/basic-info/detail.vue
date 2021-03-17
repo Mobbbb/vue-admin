@@ -23,11 +23,19 @@
                     <!--设备型号-->
                     <div class="detail-content" v-else-if="cell.key === 'deviceTypeAndToken'">
                       <div v-if="cell.value.length">
-                        <p v-for="(atom, index) in cell.value">
-                          <span style="margin: 0 5px 0 67px;" v-if="index">{{atom.deviceType}}</span>
-                          <span style="margin-right: 5px;" v-else>{{atom.deviceType}}</span>
-                          <span>{{atom.deviceToken}}</span>
-                        </p>
+                        <div v-for="(atom, index) in cell.value" 
+                        style="display: flex;">
+                          <p style="min-width: 100px;width: 100px;margin-left: 67px;white-space: nowrap;" v-if="index">{{atom.deviceType}}</p>
+                          <p style="min-width: 100px;width: 100px;white-space: nowrap;" v-else>{{atom.deviceType}}</p>
+                          <Tooltip 
+                            transfer 
+                            :max-width="400" 
+                            placement="top-start"
+                            :content="atom.deviceToken" 
+                            class="device-token">
+                            {{atom.deviceToken}}
+                          </Tooltip>
+                        </div>
                       </div>
                       <div v-else>暂无</div>
                     </div>
@@ -134,8 +142,7 @@ import {
   queryCouponList, 
   queryDisableAccountList, 
   queryEmergencyContactList, 
-  queryTripShareList,
-  getCustomerRefundList
+  queryTripShareList
 } from '@/api/passenger.js'
 
 export default {
@@ -249,14 +256,13 @@ export default {
           this.tableColumns = [...expenseHistory]
           break;
         case 3: // 退款记录
-          this.getTable(index)
           this.tableData = []
           this.tableColumns = [...refundHistory]
           break;
         case 4: // 优惠券
           this.getTable(index)
           this.tableColumns = [...coupons]
-          this.tableColumns.push(this.coupons())
+          //this.tableColumns.push(this.coupons())
           break;
         case 5: // 账号管控记录
           this.getTable(index)
@@ -452,7 +458,7 @@ export default {
               },
               on: {
                 click: () => {
-                  
+                  this.$router.push({name:'coupons-detail', params:{ id:params.row.couponUuid}})
                 }
               }
             }, '详情')
@@ -513,5 +519,10 @@ export default {
   margin-left: 80px;
   text-align: center;
   line-height: 20px;
+}
+.device-token{
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 </style>

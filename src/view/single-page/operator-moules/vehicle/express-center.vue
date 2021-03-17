@@ -89,10 +89,10 @@
                 <Col span='12'>
                     <div class="mid-sty">
                         <div>中控锁 </div>
-                        <div class="round-img" style="marginTop: 20px">
+                        <div class="round-img" style="marginTop: 10px">
                             <img :src="clock">
                         </div>
-                        <div style="marginTop: 20px">
+                        <div style="marginTop: 15px">
                             <ButtonGroup size="large">
                                 <Button v-if="!openFlag.centerLock" type="primary" @click="turnOn(0,'centerLock','落锁',2)">落锁</Button>
                                 <Button v-if="openFlag.centerLock"  @click="turnOn(0,'centerLock','落锁',2)">落锁</Button>
@@ -105,10 +105,10 @@
                 <Col span='12'>
                     <div class="mid-sty">
                         <div>允许启动 </div>
-                        <div class="round-img" style="marginTop: 20px">
+                        <div class="round-img" style="marginTop: 10px">
                             <img :src="close" alt="" >
                         </div>
-                        <div style="marginTop: 20px">
+                        <div style="marginTop: 15px">
                             <ButtonGroup size="large">
                                 <Button v-if="!openFlag.allowed" type="primary" @click="turnOn(0, 'allowed', '关闭允许启动',3)">关闭</Button>
                                 <Button v-if="openFlag.allowed"  @click="turnOn(0, 'allowed', '关闭允许启动',3)">关闭</Button>
@@ -119,7 +119,7 @@
                     </div>
                 </Col>
             </Row>
-            <Row type="flex" justify="center" align="middle" :style="{marginTop:'10px'}">
+            <Row type="flex" justify="center" align="middle" :style="{marginTop:'25px'}">
                 <!-- <Col span='12'>
                     <div class="mid-sty">
                       <div>空调 </div>
@@ -139,10 +139,10 @@
                 <Col span='12'>
                     <div class="mid-sty">
                         <div>一键鸣笛 </div>
-                        <div class="round-img" style="marginTop: 20px">
+                        <div class="round-img" style="marginTop: 10px">
                             <img :src="noise" alt="" >
                         </div>
-                        <div style="marginTop: 20px">
+                        <div style="marginTop: 15px">
                             <ButtonGroup size="large">
                                 <Button v-if="openFlag.flashLight" type="primary" @click="turnOn(0, 'flashLight', '关闭一键鸣笛',1)">关闭</Button>
                                 <Button v-if="!openFlag.flashLight"  @click="turnOn(1, 'flashLight', '开启一键鸣笛',1)">开启</Button>
@@ -150,12 +150,50 @@
                         </div>
                     </div>
                 </Col>
+                <Col span='12'>
+                    <div class="mid-sty">
+                        <div>AIBOX</div>
+                        <div class="round-img" style="marginTop: 10px">
+                            <div class="letter">A</div>
+                        </div>
+                        <div style="marginTop: 15px">
+                            <ButtonGroup size="large">
+                                <Button @click="operation('5')">唤醒</Button>
+                                <Button type="primary" @click="operation('6')">重启</Button>
+                                <Button @click="operation('9')">拉取日志</Button>
+                            </ButtonGroup>
+                        </div>
+                    </div>
+                </Col>
+            </Row>
+            <Row type="flex" justify="center" align="middle" :style="{marginTop:'25px'}">
+                <Col span='12'>
+                    <div class="mid-sty">
+                        <div>TBOX</div>
+                        <div class="round-img" style="marginTop: 10px">
+                            <div class="letter">T</div>
+                        </div>
+                        <div style="marginTop: 15px">
+                            <ButtonGroup size="large">
+                                <Button type="primary" @click="operation('7')">重启</Button>
+                                <Button @click="operation('8')">拉取日志</Button>
+                            </ButtonGroup>
+                        </div>
+                    </div>
+                </Col>
                 <Col span='12'></Col>
             </Row>
-            <div slot="footer"></div>
         </Modal>
         <Modal v-model="showPosition" width="630">
             <Amap v-if="showPosition" :pit='exactPosition'></Amap>
+        </Modal>
+        <Modal
+            footer-hide
+            :width="900"
+            title="操作记录"
+            :mask-closable="false"
+            v-model="popHistoryViewStatus">
+            <History v-model="popHistoryViewStatus" :carId="carId"></History>
         </Modal>
     </div>
 </template>
@@ -176,11 +214,13 @@ import clock from '@/assets/images/optcontrol/clock.png'
 import close from '@/assets/images/optcontrol/close.png'
 import firgent from '@/assets/images/optcontrol/firgent.png'
 import noise from '@/assets/images/optcontrol/noise.png'
+import History from './operation/history'
 
 export default {
     name: "express-center",
     components: {
-        Amap
+        Amap,
+        History
     },
     props:{
         bussinessType: String
@@ -228,6 +268,7 @@ export default {
             }
         }
         return {
+            carId: '',
             noise:noise,
             clock:clock ,
             firgent:firgent,
@@ -237,6 +278,7 @@ export default {
             authModal: false,
             contrlModal: false,
             showPosition: false,
+            popHistoryViewStatus: false, // 是否弹出操作记录
             openFlag:{
                 centerLock:false,
                 allowed:false,
@@ -363,9 +405,31 @@ export default {
                     }
                 },
                 {
+                    title: 'AIBOX状态',
+                    tooltip: true,
+                    minWidth: 150,
+                    key: 'aiBoxOnlineStatus',
+                    render: (h, params) => {
+                        let status = params.row.aiBoxOnlineStatus
+                        if (status === 0) return h('span', '下线')
+                        if (status === 1) return h('span', '上线')
+                    }
+                },
+                {
+                    title: 'TBOX状态',
+                    tooltip: true,
+                    minWidth: 150,
+                    key: 'tBoxOnlineStatus',
+                    render: (h, params) => {
+                        let status = params.row.tBoxOnlineStatus
+                        if (status === 0) return h('span', '下线')
+                        if (status === 1) return h('span', '上线')
+                    }
+                },
+                {
                     title: '操作',
                     key: 'actions',
-                    width: 300,
+                    width: 320,
                     fixed: 'right',
                     render: (h,params) =>{
                         return h('div',[
@@ -407,7 +471,7 @@ export default {
                             },'编辑 '),*/
                             h('Button',{
                                 props: {
-                                    type: "success",
+                                    type: "warning",
                                     ghost: true,
                                     size: "small"
                                 },
@@ -419,7 +483,7 @@ export default {
                                     marginRight: '15px',
                                 },
                                 on:{
-                                    click:()=>{
+                                    click: () => {
                                         this.contrlModal = true
                                         this.seletedCarVin = params.row.vin
                                     }
@@ -435,8 +499,11 @@ export default {
                                     name: 'hasAuth',
                                     value: 'vehicle-center-authorize'
                                 }],
+                                style:{
+                                    marginRight: '15px',
+                                },
                                 on:{
-                                    click:()=>{
+                                    click: () => {
                                         this.authModal = true
                                         this.driverForm.identityCardNumber = ''
                                         this.driverForm.authStartTime = ''
@@ -445,11 +512,25 @@ export default {
                                     }
                                 }
                             },'司机授权'),
+                            h('Button',{
+                                props: {
+                                    type: "success",
+                                    ghost: true,
+                                    size: "small"
+                                },
+                                on:{
+                                    click: () => {
+                                        this.popHistoryViewStatus = true
+                                        this.carId = params.row.vin
+                                    }
+                                }
+                            },'操作记录')
                         ])
                     }
                 }
             ],
             carList:[],
+            historyDate: [],
             driverForm:{
                 identityCardNumber: '',
                 authStartTime: null,
@@ -480,7 +561,7 @@ export default {
             },
         }
     },
-    mounted(){
+    mounted(){1
         let getVin = this.$route.params.id || ''
         this.inputList[1].value = getVin
         this.inputList[0].cascaderList = JSON.parse(localStorage.getItem('pcOperatorList'))
@@ -497,6 +578,7 @@ export default {
             }
             let params = JSON.parse(JSON.stringify(this.searchParams))
             data = Object.assign(data, params, newdata|| {})
+
             getVehicleList(data).then(res =>{
                 this.carList = res.data.data.list
                 this.total = res.data.data.totalCount
@@ -654,11 +736,78 @@ export default {
                 }
             })
         },
+        operation (type) {
+            if (type === '8' || type === '9') { // 拉取日志
+                this.historyDate = []
+                this.$Modal.confirm({
+                    title: '拉取日志',
+                    render: (h) => {
+                        return h('div', [
+                            h('div', '拉取日志时间范围 :'),
+                            h('DatePicker', {
+                                props: {
+                                    options: {
+                                        disabledDate (date) {
+                                            return date && date.valueOf() > Date.now()
+                                        }
+                                    },
+                                    value: this.historyDate,
+                                    type: 'datetimerange',
+                                    format: 'yyyy-MM-dd HH:mm:ss',
+                                    placeholder: '请选择拉取日志时间范围'
+                                },
+                                style: {
+                                    width: '300px',
+                                    marginTop: '10px'
+                                },
+                                on: {
+                                    'on-change': (val) => {
+                                        this.historyDate = val
+                                    }
+                                }
+                            })
+                        ])
+                    },
+                    onOk: () => {
+                        if (this.historyDate.length) {
+                            let data = {
+                                vin: this.seletedCarVin, 
+                                controlType: type,
+                                logStartTime: this.historyDate[0],
+                                logEndTime: this.historyDate[1]
+                            }
+                            controlCar(data).then(res => {
+                                this.$Message.success('拉取成功')
+                            })
+                        } else {
+                            this.$Message.info('未选择拉取日期，拉取失败')
+                        }
+                    }
+                })
+            } else { // 其他操作
+                let data = {
+                    vin: this.seletedCarVin, 
+                    controlType: type
+                }
+                controlCar(data).then(res => {
+                    this.$Message.success('操作成功')
+                })
+            }
+        }
     }
 }
 </script>
 
 <style lang="less" scoped>
+.letter{
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+    font-size: 30px;
+    color: #4b9cf2;
+    border-radius: 30px;
+    background: #eaf3fd;
+}
 .container_box{
     .download{
     color: rgb(0, 153, 204);

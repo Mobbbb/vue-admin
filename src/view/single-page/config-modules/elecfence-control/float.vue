@@ -14,9 +14,8 @@
           <Form ref="formValidate" :model="floatParams" :rules="ruleUser" :label-width="100">
             <FormItem label="名称：" prop="name">
               <Input
-                clearable
                 :maxlength="40"
-                :disabled="invalidEditor"
+                :readonly="invalidEditor"
                 v-model="floatParams.name"
                 placeholder="请输入名称"
                 style="width: 300px"
@@ -53,13 +52,14 @@
                 placeholder="请选择围栏类型"
                 :disabled="invalidEditor">
                 <Option
-                  v-for="item in railTypeList"
+                  v-for="item in railTypeMap"
                   :value="item.value"
                   :key="item.value"
                 >{{ item.label }}</Option>
               </Select>
               <Alert v-if="floatParams.railType === 1" show-icon>围栏范围内向乘客提供叫车服务</Alert>
               <Alert v-if="floatParams.railType === 2" show-icon>配置完成后请前往司机管理平台配置相关围栏的奖励规则</Alert>
+              <Alert v-if="floatParams.railType === 3" show-icon>围栏内的乘客方可参加指定营销活动</Alert>
             </FormItem>
             <FormItem label="范围：" prop="scopes">
               <div class="fonttitle">
@@ -83,7 +83,7 @@
                 format="yyyy-MM-dd HH:mm:ss"
                 placeholder="请选择生效时间"
                 style="width: 300px"
-                :disabled="invalidEditor"
+                :readonly="invalidEditor"
                 :options="options"
                 v-model="floatParams.effectiveTime"
               ></DatePicker>
@@ -95,7 +95,7 @@
                 format="yyyy-MM-dd HH:mm:ss"
                 placeholder="请选择失效时间"
                 style="width: 300px"
-                :disabled="invalidEditor"
+                :readonly="invalidEditor"
                 v-model="floatParams.failureTime"
               ></DatePicker>
             </FormItem>
@@ -103,7 +103,7 @@
               <Input
                 autosize
                 :maxlength="200"
-                :disabled="invalidEditor"
+                :readonly="invalidEditor"
                 type="textarea"
                 placeholder="请填写备注"
                 v-model="floatParams.remark"
@@ -148,16 +148,11 @@
 </template>
 
 <script>
-import "@/styles/cyk-style.css";
-import { regTest } from "@/libs/tools";
-import {
-  addCarrier,
-  editCarrier,
-  getCarrierInfo
-} from "@/api/operator-carrier";
-import { savePen, selectPen, getPenDetail } from "@/api/configData.js";
-import { returnFields } from ".";
-import { timeFormat } from "@/libs/util";
+import "@/styles/cyk-style.css"
+import { addCarrier, editCarrier, getCarrierInfo } from "@/api/operator-carrier"
+import { savePen, selectPen, getPenDetail } from "@/api/configData.js"
+import { railTypeMap } from './index.js'
+import { timeFormat } from "@/libs/util"
 export default {
   props: {
     popView: Boolean,
@@ -341,21 +336,8 @@ export default {
       sightmapScope: true,
       maptitle: "围栏范围选择",
       polygon: null,
-      railTypeList: [
-        // {
-        //   value: 0,
-        //   label: "全部"
-        // },
-        {
-          value: 1,
-          label: "运营围栏"
-        },
-        {
-          value: 2,
-          label: "流水奖励围栏"
-        }
-      ]
-    };
+      railTypeMap
+    }
   },
   watch: {
     popView: function() {
@@ -663,8 +645,8 @@ export default {
               newJSON.uuid = this.uuid;
             }
             savePen(newJSON).then(res => {
-                this.$emit("on-confirm", true);
-                this.$Message.success(res.data.msg);
+              this.$emit("on-confirm", true);
+              this.$Message.success(res.data.msg);
             })
           }
         });

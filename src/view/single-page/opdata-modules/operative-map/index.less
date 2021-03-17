@@ -1,17 +1,21 @@
 .pagetitle{
   font-size: 16px;
-  color: #666;
-  height: 30px;
-  line-height: 30px;
+  color: #333;
+  height: 46px;
+  line-height: 46px;
   font-weight: 600;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top:-15px;
   .closearrow{
     font-size: 14px;
     color: #2D8CF0;
     font-weight: 500;
+    line-height: 20px;
     cursor: pointer;
+    position: relative;
+    bottom:-10px;
   }
 }
 .maprea {
@@ -22,10 +26,11 @@
     .amap-page-container {
       position: absolute;
       top: 0;
-      left: 0;
+      left: 350px;
       bottom: 0;
       right: 0;
       height: 82vh;
+      min-width:850px;
     }
     .leftshadow {
       position: absolute;
@@ -33,15 +38,12 @@
       top: 0;
       height: 83vh;
       // width: 220px;
-      padding-right: 20px;
+      padding:0 20px 50px 0;
       background: rgba(255, 255, 255, 1);
       z-index: 88;
       overflow-y: scroll;
-      padding-bottom: 50px;
+      border-top:1px solid #f3f3f3;
       &::-webkit-scrollbar {//滚动条的宽度
-        // width:9px;
-        // height:9px;
-        // border-radius: 4.5px 4.5px;
         width:0px;
         height:0px;
       }
@@ -50,16 +52,13 @@
         background-color:rgba(0,0,0,0);
       }
       &::-webkit-scrollbar-thumb {//滚动条的设置
-        // background-color:#dddddd;
-        // background-clip:padding-box;
-        // min-height:28px;
         background-color:rgba(0,0,0,0);
       }
       &::-webkit-scrollbar-thumb:hover {
-        // background-color:#bbb;
         background-color:rgba(0,0,0,0);
       }
       .locationquery {
+        padding-top:15px;
         .selectfont{
           font-size: 16px;
           color: #666;
@@ -67,16 +66,22 @@
           line-height: 30px;
           letter-spacing: 1px;
           font-weight: 600;
-          // padding: 0 20px;
+          margin-bottom:15px;
+          &::before {
+            display: inline-block;
+            content: "";
+            width: 2px;
+            height: 15px;
+            background: #2d8cf0;
+            margin-right: 7px;
+            position: relative;
+            top: 1px;
+          }
         }
         .selectline{
-          padding: 10px 0;
-          // display: flex;
-          // justify-content: space-between;
-          // flex-direction: column;
-          // align-items: flex-end;
+          padding-bottom:15px;
           .selectmargin{
-            margin-top: 20px;
+            margin-bottom: 18px;
           }
           .selectidx {
             display: flex;
@@ -138,6 +143,7 @@
                     flex-direction: column;
                     padding: 3px 5px;
                     border: 1px solid #E7E6E6;
+                    color:#999;
                   }
                   p:last-child{
                     margin-top: 10px;
@@ -160,8 +166,6 @@
           align-items: center;
         }
         .searchbtn{
-          margin-top: 20px;
-          margin-bottom: 10px;
           display: flex;
           justify-content: flex-end;
           align-items: center;
@@ -256,16 +260,17 @@
     .leftbottomshadow{
       position: absolute;
       bottom: 20px;
-      left: 24%;
+      left: 370px;
       display: flex;
       justify-content: flex-start;
       align-items: center;
+      min-width:650px;
       .detailexplain{
         display: flex;
         justify-content: flex-start;
         align-items: center;
         .extile{
-          color: #666666;
+          color: #333;
           font-size: 14px;
         }
         .smallbtnstyle{
@@ -275,7 +280,6 @@
           vertical-align: middle;
           line-height: 30px;
           font-size: 14px;
-          cursor: pointer;
           &.backbg_s{
             color: #fff;
             background: #151414;
@@ -286,7 +290,7 @@
           }
           &.backbg_t{
             color: #000;
-            background: #FFEE00;
+            background: #fcd000;
           }
         }
         &.margin_rights{
@@ -398,7 +402,7 @@
       width: 320px;
       height: 100%;
       background: rgba(255, 255, 255, 1);
-      z-index: 66;
+      z-index: 200;
       padding: 20px 0;
       padding-top: 0;
       transition: right 1s;
@@ -439,6 +443,7 @@
         display: flex;
         justify-content: flex-start;
         margin: 10px 0;
+        line-height: 24px;
         .sentchoice{
           color: #000;
           font-size: 16px;
@@ -519,13 +524,12 @@
     padding-top: 20px;
     // background: rgba(	135,206,250, .1);
     background: #f2f2f2;
+    font-size: 15px;
     .title_header{
-      font-size: 16px;
-      color: #666666;
+      color: #333;
     }
     .morethan{
       color: #2D8CF0;
-      font-size: 16px;
       cursor: pointer;
     }
   }
@@ -543,8 +547,8 @@
         align-items: center;
         flex-direction: column;
         p:first-child{
-          font-size: 16px;
-          color: #666666;
+          font-size: 14px;
+          color: #666;
           margin-bottom: 8px;
         }
         p:last-child{
@@ -556,48 +560,30 @@
     .adressplace{
       display: flex;
       justify-content: flex-start;
-      align-items: center;
-      margin: 20px 0;
+      align-items: flex-start;
+      margin-top: 20px;
       p:last-child{
-        margin-left: 8px;
+        margin-left: 6px;
         color: #666;
-        font-size: 16px;
+        font-size: 14px;
       }
     }
     .drivermsg{
       margin-top: 10px;
-      .drivername{
+      font-size: 14px;
+      .driver-item{
         display: flex;
         align-items: center;
-        margin-bottom: 15px;
-        p{
-          font-size: 16px;
-        }
-        p:first-child{
-          min-width: 64px;
-          margin-right: 30px;
-        }
+        justify-content: space-between;
       }
       .hascolor{
         color: #000;
+        font-weight: 600;
       }
-      .drivermobile{
-        display: flex;
-        align-items: center;
-        p{
-          font-size: 16px;
-        }
-        p:first-child{
-          margin-right: 30px;
-        }
-        .mobileitem{
-          display: flex;
-          align-items: center;
-          .ivu-icon{
-            cursor: pointer;
-            color: #2D8CF0;
-          }
-        }
+      .blue-color{
+        color: #2D8CF0;
+        cursor: pointer;
+        margin-left: 10px;
       }
     }
   }
@@ -648,4 +634,52 @@
 }
 .amap-copyright {
   opacity:0;
+}
+.listtabel{
+  .ivu-table-overflowY{
+    &::-webkit-scrollbar {
+      //滚动条的宽度
+      width: 9px;
+      height: 9px;
+      border-radius: 4.5px 4.5px;
+    }
+    &::-webkit-scrollbar-track-piece {
+      //滚动条凹槽的颜色，还可以设置边框属性
+      background-color: #f8f8f8;
+    }
+    &::-webkit-scrollbar-thumb {
+      // 滚动条的设置
+      background-color: #dddddd;
+      background-clip: padding-box;
+      min-height: 28px;
+    }
+    &::-webkit-scrollbar-thumb:hover {
+      background-color: #bbb;
+    }
+  }
+}
+.amap-page-container /deep/ {
+  .amap-scalecontrol{
+    right:70px !important;
+    left:auto !important;
+    bottom:30px !important;
+  }
+  .amap-ui-control-zoom{
+    width:36px;
+  }
+  .amap-ui-control-zoom a{
+    width:35px;
+    font-size: 20px;
+  }
+}
+.addmessage{
+  position: relative;
+  .iptfontnums{
+    position: absolute;
+    bottom:0;
+    right:-60px;
+  }
+}
+.small-shadow{
+  box-shadow: 1px 1px 6px #ddd;
 }

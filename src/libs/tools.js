@@ -350,6 +350,8 @@ export const regTest = (testValue, type) => {
   var mobile = /^(0|86|17951)?(13[0-9]|15[0-9]|17[0-9]|18[0-9]|14[0-9]|19[0-9]|16[0-9])[0-9]{8}$/
   var phone = /^([0-9]{3,4}-)?[0-9]{7,8}$/
   var email = /^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/
+  var url = /((ht|f)tps?:)\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]/g
+  var password = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[1-9]).{8,}$/
   switch (type) {
     case 'phone&mobile':
       return (phone.test(testValue) || mobile.test(testValue))
@@ -359,6 +361,10 @@ export const regTest = (testValue, type) => {
       return mobile.test(testValue)
     case 'email':
       return email.test(testValue)
+    case 'url':
+      return url.test(testValue)
+    case 'password':
+      return password.test(testValue)
     default: 
       return false
   }
@@ -388,13 +394,13 @@ export const getCustomFields = (allFields, selectIds) => {
  * @param {String} key value所对应的键名
  * @description 省市数据结构化
  */
-export const cpTranslate = (cpList, provinceKey='', citykey='') => {
+export const cpTranslate = (cpList, provinceKey='', citykey='',cityList='') => {
   let arr = JSON.parse(JSON.stringify(cpList))
   if(provinceKey === ''){
     arr.forEach(function(item, index){
       item.value = item.provinceID
       item.label = item.province
-      item.children = item.nodes
+      item.children = item.nodes||item[cityList] || item.citys
       item.children.forEach(function(_item, _index){
         _item.value = _item.cityID
         _item.label = _item.city
@@ -404,7 +410,7 @@ export const cpTranslate = (cpList, provinceKey='', citykey='') => {
     arr.forEach(function(item, index){
       item.value = item[provinceKey]
       item.label = item.province
-      item.children = item.nodes
+      item.children = item.nodes||item[cityList]
       item.children.forEach(function(_item, _index){
         _item.value = _item[citykey]
         _item.label = _item.city
@@ -432,9 +438,9 @@ export const cppTranslate = (cppList) => {
  * @param {String} url 请求api地址
  * @description 导出文件
  */
-export const exportFile = (param, url, fileName) => {
+export const exportFile = (param, url, fileName, method="post") => {
   axios({
-    method: 'post',
+    method: method,
     headers: {'Authorization': getToken()},
     url: Vue.prototype._baseUrl + url,
     data: param,

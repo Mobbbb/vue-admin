@@ -14,7 +14,6 @@ export default {
     },
     actions: {
         handleAddUuid(state, val) {
-            console.log(val)
             store.commit('ONADDUUID', val)
         },
         handleDelUuid() {

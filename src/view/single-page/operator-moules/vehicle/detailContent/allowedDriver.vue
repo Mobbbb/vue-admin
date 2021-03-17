@@ -24,7 +24,8 @@
                             <br>
                             <span>司机姓名 {{item.name}}</span>
                             <br>
-                            <a @click="handleEdit(item)">授权编辑</a>
+                            <a @click="goToDetail(item.uuid)">查看详情</a>
+                            <a @click="handleEdit(item)" style="marginLeft:15px">授权编辑</a>
                             <!-- <a @click="handleCancel(item)" style="marginLeft:15px">解绑司机</a> -->
                         </div>
                     </Col>

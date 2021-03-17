@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Button type="primary" :loading="loading" @click="handleClick" :style="{'width': width + 'px'}">
+    <Button :type="type" :loading="loading" @click="handleClick" :style="{'width': width + 'px'}">
       <span v-if="!loading">{{btntitle}}</span>
       <span v-else>{{loadingtitle}}</span>
     </Button>
@@ -26,6 +26,10 @@ export default {
     width: {
         default: 190,
         type: Number
+    },
+    type: {
+      type:String,
+      default: 'default'
     }
   },
   data() {

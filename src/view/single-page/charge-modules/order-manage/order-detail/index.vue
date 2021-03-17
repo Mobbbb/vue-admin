@@ -140,13 +140,13 @@ export default {
       axiosOrderDetail({ uuid: this.$route.params.id }).then(res => {
         this.infoData = res.data.data || {};
         this.loading = false;
-        let t3PriceNum = 0;
+        let ownPriceNum = 0;
         let marketPriceNum = 0;
         let PriceNum = 0;
         this.infoData.priceList.forEach(item => {
           if (item.priceType == 1) {
-            item.typeName = "T3单价";
-            t3PriceNum++;
+            item.typeName = "单价";
+            ownPriceNum++;
           } else if (item.priceType == 2) {
             item.typeName = "市场价";
             marketPriceNum++;
@@ -155,7 +155,7 @@ export default {
             PriceNum++;
           }
         });
-        if (t3PriceNum > 1 || marketPriceNum > 1 || PriceNum > 1) {
+        if (ownPriceNum > 1 || marketPriceNum > 1 || PriceNum > 1) {
           this.columns.push({
             title: "时段",
             key: "timeFrame"

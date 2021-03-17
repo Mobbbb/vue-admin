@@ -2,9 +2,10 @@
   <div>
     <div class="pagetitle">
       <p>车辆分布图</p>
-      <p class="closearrow" @click="arrowtoright" v-if="choosecar">关闭详情信息</p>
+      <p class="closearrow" @click="arrowtoright(true)" v-if="choosecar">关闭详情信息</p>
     </div>
     <div class="maprea">
+      <!-- 地图 -->
       <div class="amap-page-container">
         <el-amap
           vid="amapcode"
@@ -12,6 +13,8 @@
           :zoom="zoom"
           class="amap-demo"
           :events="events"
+          :zooms="[3, 20]"
+          mapStyle="amap://styles/macaron"
           ref="map"
         >
           <el-amap-marker
@@ -23,74 +26,29 @@
           ></el-amap-marker>
         </el-amap>
       </div>
-      <Modal title="发送短信" v-model="messagesent" class-name="vertical-center-modal">
-        <div class="disstyle">
-          <p class="sendobj sendtitle">司机电话：</p>
-          <div class="sentchoice">{{driverMsgData.mobile}}</div>
-        </div>
-        <div class="messagedistance">
-          <p class="sendobj sendtitle">短信内容：</p>
-          <div class="addmessage">
-            <Input
-              v-model="addmsg"
-              type="textarea"
-              style="width: 300px;"
-              :maxlength="remarklength"
-              :rows="6"
-              placeholder="请输入短信内容"
-              @on-change="iptevent"
-            />
-            <div class="iptfontnums">{{iptfontnums}}/200</div>
-          </div>
-        </div>
-        <div slot="footer">
-          <Button type="text" @click="cancelMessage">取消</Button>
-          <Button type="primary" @click="confirmSave">确认</Button>
-        </div>
-      </Modal>
-      <Modal title="当日订单列表" v-model="carslists" :width="1330" class-name="vertical-center-modal">
-        <div class="listcontent">
-          <div class="listtabel">
-            <VTable
-              :total="carlistdata.total"
-              :current="carlistdata.current"
-              :pageSize="carlistdata.pageSize"
-              :parColumns="carlistdata.parColumns"
-              :parTableData="carlistdata.parTableData"
-              :height="carlistdata.height"
-              :width="carlistdata.width"
-              @selectObj="selectObj"
-              @changePage="changePage"
-              @changePageSize="changePageSize"
-              class="top15"
-            ></VTable>
-          </div>
-          <div class="pagegranption"></div>
-        </div>
-      </Modal>
-      <div :class="[choosecar? 'animation' : '', 'carsmsg']">
+      <!-- 右侧车辆信息 -->
+      <div :class="[choosecar? 'animation' : '', 'carsmsg']" @click.stop>
         <div class="floatmodal" v-if="!sitePoints">
           <div class="conttitle">
             <div class="title_header">实时信息</div>
-            <div class="morethan" @click="toCarsManger">更多</div>
           </div>
           <div class="contents">
             <div class="timecontmsg">
               <div class="ennergy">
                 <p>剩余能耗</p>
-                <p>{{realTimeData.soc || 0}}%</p>
+                <p>{{realTimeData.soc || 0 }}%</p>
               </div>
               <div class="ennergy">
                 <p>续航里程</p>
-                <p>{{realTimeData.enduranceMileage || 0}}Km</p>
+                <p>{{ realTimeData.enduranceMileage || 0 }}Km</p>
               </div>
               <div class="ennergy">
                 <p>当前车速</p>
-                <p>{{realTimeData.speed || 0}}Km/h</p>
+                <p>{{realTimeData.speed || 0 }}Km/h</p>
               </div>
             </div>
             <div class="adressplace">
-              <Icon type="md-pin" size="20"/>
+              <Icon type="md-pin" size="18" color="#aaa"/>
               <p>{{realTimeData.address || '暂无'}}</p>
             </div>
           </div>
@@ -100,16 +58,24 @@
           </div>
           <div class="contents">
             <div class="drivermsg">
-              <div class="drivername">
+              <div class="driver-item bottom15">
                 <p>司机姓名</p>
                 <p class="hascolor">{{driverMsgData.name || '暂无'}}</p>
               </div>
-              <div class="drivermobile">
+              <div class="driver-item bottom15">
                 <p>司机电话</p>
-                <div class="mobileitem">
-                  <p class="hascolor">{{driverMsgData.mobile || '暂无'}}</p>
-                  <Icon type="ios-mail" size="28" @click="sendMassage(driverMsgData.mobile)"/>
+                <div>
+                  <span class="hascolor">{{driverMsgData.mobile || '暂无'}}</span>
+                  <Icon type="ios-mail" size="26" class="blue-color" @click="sendMassage(driverMsgData.mobile)"/>
                 </div>
+              </div>
+              <div class="driver-item" v-if="driverMsgData.status===1">
+                <p>运营管理</p>
+                <p class="blue-color" @click="offlineModal=true;switchTitle='强制下线'">强制下线</p>
+              </div>
+              <div class="driver-item" v-if="driverMsgData.status===8">
+                <p>运营管理</p>
+                <p class="blue-color" @click="offlineModal=true;switchTitle='允许上线'">允许上线</p>
               </div>
             </div>
           </div>
@@ -120,33 +86,34 @@
           </div>
           <div class="contents">
             <div class="drivermsg">
-              <div class="drivername">
+              <div class="driver-item bottom15">
                 <p>车牌号码</p>
                 <p class="hascolor">{{carBasicMsg.plateNumber || '暂无'}}</p>
               </div>
-              <div class="drivername">
+              <div class="driver-item bottom15">
                 <p>业务类型</p>
                 <p class="hascolor">{{ carBasicMsgBType || '暂无'}}</p>
               </div>
-              <div class="drivername">
+              <div class="driver-item bottom15">
                 <p>运营商</p>
                 <p class="hascolor">{{ driverMsgData.agentName || '暂无'}}</p>
               </div>
-              <div class="drivername">
+              <div class="driver-item bottom15">
                 <p>品牌</p>
                 <p class="hascolor">{{carBasicMsg.brandName || '暂无'}}</p>
               </div>
-              <div class="drivername">
-                <p>车型</p>
-                <p class="hascolor">{{carBasicMsg.vehicleType || '暂无'}}</p>
+              <div class="driver-item bottom15">
+                <p>车型名称</p>
+                <p class="hascolor">{{carBasicMsg.modelName || '暂无'}}</p>
               </div>
-              <div class="drivername">
+              <div class="driver-item">
                 <p>颜色</p>
                 <p class="hascolor">{{ carBasicMsg.colour || '暂无'}}</p>
               </div>
             </div>
           </div>
         </div>
+        <!-- 周边场地信息 -->
         <div class="sitedetail" v-else>
           <div class="msgcontent">
             <p class="msgtitles">周边设施站点信息</p>
@@ -169,7 +136,9 @@
           </div>
         </div>
       </div>
+      <!-- 左侧条件查询 -->
       <div class="leftshadow">
+        <!-- 城市 -->
         <div class="locationquery borderbottom">
           <div class="selectline disflexstyle">
             <div class="selecttitles">城市</div>
@@ -184,14 +153,16 @@
             ></Cascader>
           </div>
         </div>
+        <!-- 车辆 -->
         <div class="locationquery">
           <div class="selectfont">定位查询</div>
           <div class="selectline">
             <div class="selectmargin disflexstyle">
               <div class="selecttitles">运营商</div>
               <Select
-                :clearable="true"
+                clearable
                 v-model="currentChangeData.agentUUID"
+                multiple
                 style="width:190px"
                 placeholder="请选择运营商"
                 @on-change="getAgentByoperation"
@@ -206,8 +177,9 @@
             <div class="selectmargin disflexstyle">
               <div class="selecttitles">司管</div>
               <Select
-                :clearable="true"
+                clearable
                 v-model="currentChangeData.driverManagerId"
+                multiple
                 style="width:190px"
                 placeholder="请选择司管"
               >
@@ -219,12 +191,13 @@
               </Select>
             </div>
             <div class="selectmargin disflexstyle">
-              <div class="selecttitles">业务类型</div>
+              <div class="selecttitles">业务线</div>
               <Select
                 v-model="currentChangeData.carType"
                 style="width:190px"
-                placeholder="请选择业务类型"
-                :clearable="true"
+                multiple
+                placeholder="请选择业务线"
+                clearable
               >
                 <Option
                   v-for="item in businessTypeList"
@@ -234,9 +207,10 @@
               </Select>
             </div>
             <div class="selectmargin disflexstyle">
-              <div class="selecttitles">车辆运营状态</div>
+              <div class="selecttitles">运营状态</div>
               <Select
-                :clearable="true"
+                clearable
+                multiple
                 v-model="currentChangeData.operationStatus"
                 style="width:190px"
                 placeholder="请选择车辆运营状态"
@@ -249,9 +223,9 @@
               </Select>
             </div>
             <div class="selectmargin disflexstyle">
-              <div class="selecttitles">车牌号或手机号</div>
+              <div class="selecttitles">车牌号/手机号</div>
               <Input
-                :clearable="true"
+                clearable
                 placeholder="请输入车牌号或手机号"
                 style="width: 190px"
                 v-model="currentChangeData.carNoOrMobile"
@@ -259,11 +233,12 @@
             </div>
           </div>
           <div class="searchbtn">
-            <LoadingButton :loading="isloading" @on-click="onSearchBtn(chooseCityMsg)"></LoadingButton>
+            <LoadingButton class="right15" :width="110" btntitle="清空" loadingtitle="清空中..." :loading="isClearloading" @on-click="onSearchBtn(chooseCityMsg,true)"></LoadingButton>
+            <LoadingButton type="primary" :loading="isloading" @on-click="onSearchBtn(chooseCityMsg)"></LoadingButton>
           </div>
         </div>
+        <!-- 场地 -->
         <div class="locationquery borderbottom">
-          <div class="selectfont">场地设施</div>
           <div class="selectline">
             <div class="selectidx">
               <CheckboxGroup
@@ -284,7 +259,7 @@
                             :style="{'color':comCheckStatus[1]?'#2d8cf0': ''}"
                           />
                         </p>
-                        <p>充电桩</p>
+                        <p>充电站</p>
                       </div>
                     </Checkbox>
                   </div>
@@ -361,6 +336,7 @@
             </div>
           </div>
         </div>
+        <!-- 电子围栏 -->
         <div class="locationquery">
           <div class="selectfont">电子围栏</div>
           <div class="selectline">
@@ -370,7 +346,9 @@
                 :clearable="true"
                 v-model="enclosureTypeData.enclosuretype"
                 style="width:190px"
-                placeholder="请选择围栏类型">
+                placeholder="请选择围栏类型"
+                @on-change="getElefenceList"
+              >
                 <Option
                   v-for="item in railTypeList"
                   :value="item.value"
@@ -378,11 +356,32 @@
                 >{{ item.label }}</Option>
               </Select>
             </div>
+            <div class="selectmargin disflexstyle">
+              <div class="selecttitles">选择围栏</div>
+              <Select
+                :clearable="true"
+                multiple
+                v-model="enclosureTypeData.enclosureitem"
+                style="width:190px"
+                placeholder="请选择围栏"
+              >
+                <Option
+                  v-for="item in elefenlist"
+                  :value="item.uuid"
+                  :key="item.uuid"
+                >{{ item.name }}</Option>
+              </Select>
+            </div>
+          </div>
+          <div class="searchbtn">
+            <Button class="right15" style="width:110px" @click="cllearElefence()">清空</Button>
+            <Button type="primary" @click="renderElefence(enclosureTypeData.enclosureitem)" style="width:190px">查询</Button>
           </div>
         </div>
       </div>
+      <!-- 地图左上-刷新热力图路况 -->
       <div class="lefttopshadow">
-        <div class="btnstyle-shadow animatestyle" @click="refreshMap">
+        <div class="btnstyle-shadow animatestyle" @click="refreshMap(true)">
           <Icon
             type="md-sync"
             size="26"
@@ -408,38 +407,143 @@
           <p :style="{'color': isVisibleToggle? '#2d8cf0' : ''}">实时路况</p>
         </div>
       </div>
+      <!-- 地图下方，标识解读 -->
       <div class="leftbottomshadow">
         <div class="detailexplain margin_rights">
-          <p class="extile">车辆类型：</p>
-          <div class="smallbtnstyle backbg_s" @click="carTypeChoice(2)">专车</div>
-          <div class="smallbtnstyle backbg_h" @click="carTypeChoice(4)">快车</div>
-          <div class="smallbtnstyle backbg_t" @click="carTypeChoice(1)">出租车</div>
+          <p class="extile">业务线：</p>
+          <div class="small-shadow detailexplain">
+            <div class="smallbtnstyle backbg_s" @click="carTypeChoice(2)">专车</div>
+            <div class="smallbtnstyle backbg_h" @click="carTypeChoice(4)">快车</div>
+            <div class="smallbtnstyle backbg_t" @click="carTypeChoice(1)">出租车</div>
+          </div>
         </div>
         <div class="detailexplain">
-          <p class="extile">车辆概况：</p>
-          <div class="survey">
-            <span class="dots dots_s"></span>
-            <span>服务中</span>
-            <!-- 3 绿色-->
-          </div>
-          <div class="survey">
-            <span class="dots dots_g"></span>
-            <span>接乘中</span>
-            <!-- 2 蓝色-->
-          </div>
-          <div class="survey">
-            <span class="dots dots_f"></span>
-            <span>巡游中</span>
-            <!-- 1 红色-->
-          </div>
-          <div class="survey">
-            <span class="dots dots_o"></span>
-            <span>下线</span>
-            <!-- 0 灰色-->
+          <p class="extile">运营状态：</p>
+          <div class="small-shadow detailexplain">
+            <div class="survey">
+              <span class="dots dots_s"></span>
+              <span>服务中</span>
+              <!-- 3 绿色-->
+            </div>
+            <div class="survey">
+              <span class="dots dots_g"></span>
+              <span>接乘中</span>
+              <!-- 2 蓝色-->
+            </div>
+            <div class="survey">
+              <span class="dots dots_f"></span>
+              <span>巡游中</span>
+              <!-- 1 红色-->
+            </div>
+            <div class="survey">
+              <span class="dots dots_o"></span>
+              <span>下线</span>
+              <!-- 0 灰色-->
+            </div>
           </div>
         </div>
       </div>
     </div>
+    <!-- 强制下线 -->
+    <Modal :title="switchTitle" v-model="offlineModal" :width="700" class-name="vertical-center-modal">
+      <Row>
+        <Col span="12">
+          <div class="disstyle">
+            <p class="sendobj sendtitle">司机ID：</p>
+            <div class="sentchoice">{{driverMsgData.driverNo || '暂无'}}</div>
+          </div>
+        </Col>
+        <Col span="12">
+          <div class="disstyle">
+            <p class="sendobj sendtitle">司机电话：</p>
+            <div class="sentchoice">{{driverMsgData.mobile || '暂无'}}</div>
+          </div>
+        </Col>
+      </Row>
+      <Row class="bottom15">
+        <Col span="12">
+          <div class="disstyle">
+            <p class="sendobj sendtitle">司机姓名：</p>
+            <div class="sentchoice">{{driverMsgData.name || '暂无'}}</div>
+          </div>
+        </Col>
+        <Col span="12">
+          <div class="disstyle">
+            <p class="sendobj sendtitle">身份证号：</p>
+            <div class="sentchoice">{{driverMsgData.idCard || '暂无'}}</div>
+          </div>
+        </Col>
+      </Row>
+      
+      <div class="messagedistance">
+        <p class="sendobj sendtitle"><span class="must-tag">*</span>备注：</p>
+        <div class="addmessage">
+          <Input
+            v-model="offlineRemark"
+            type="textarea"
+            style="width: 560px;"
+            :maxlength="remarklength"
+            :rows="4"
+            placeholder="请输入备注"
+            @on-change="iptevent"
+          />
+          <span class="iptfontnums">{{offlineRemark.length}}/200</span>
+        </div>
+      </div>
+      <div slot="footer">
+        <Button type="text" @click="offlineModal=false;offlineRemark=''">取消</Button>
+        <Button type="primary" @click="axiosOffline">确认</Button>
+      </div>
+    </Modal>
+    <!-- 发送短信弹窗 -->
+    <Modal title="发送短信" v-model="messagesent" class-name="vertical-center-modal">
+      <div class="disstyle">
+        <p class="sendobj sendtitle">司机电话：</p>
+        <div class="sentchoice">{{driverMsgData.mobile}}</div>
+      </div>
+      <div class="messagedistance">
+        <p class="sendobj sendtitle">短信内容：</p>
+        <div class="addmessage">
+          <Input
+            v-model="addmsg"
+            type="textarea"
+            style="width: 300px;"
+            :maxlength="remarklength"
+            :rows="6"
+            placeholder="请输入短信内容"
+            @on-change="iptevent"
+          />
+          <span class="iptfontnums">{{iptfontnums}}/200</span>
+        </div>
+      </div>
+      <div slot="footer">
+        <Button type="text" @click="cancelMessage">取消</Button>
+        <Button type="primary" @click="confirmSave">确认</Button>
+      </div>
+    </Modal>
+    <!-- 当日订单列表弹窗 -->
+    <Modal title="当日订单列表" v-model="carslists" :width="1330" class-name="vertical-center-modal">
+      <div class="listcontent">
+        <div class="listtabel">
+          <VTable
+            :total="carlistdata.total"
+            :current="carlistdata.current"
+            :pageSize="carlistdata.pageSize"
+            :parColumns="carlistdata.parColumns"
+            :parTableData="carlistdata.parTableData"
+            :pageSizeOpts="carlistdata.pageSizeOpts"
+            :height="carlistdata.height"
+            :width="carlistdata.width"
+            :isShowPage="false"
+            @selectObj="selectObj"
+            @changePage="changePage"
+            @changePageSize="changePageSize"
+            class="top15"
+          ></VTable>
+        </div>
+        <div class="pagegranption"></div>
+      </div>
+    </Modal>
   </div>
 </template>
 <script>
@@ -458,25 +562,53 @@ import {
   getRmoteEdit,
   getCarByVin,
   getDriverDetail,
-  getDriverOrderPage
+  getDriverOrderPage,
+  axiosForcedOffline,
+  axiosAllowOnline
 } from "@/api/configData.js";
 import { getProvinceCityList } from "@/api/common.js";
 import { timeFormat } from "@/libs/util";
 import siteImg from "@/assets/images/mapsicon/icons.svg";
-import graycar from "@/assets/images/carstatus/grey.png";
-import greencar from "@/assets/images/carstatus/green.png";
-import bluecar from "@/assets/images/carstatus/blue.png";
-import redcar from "@/assets/images/carstatus/red.png";
-import { constants } from 'crypto';
+import black from "@/assets/images/carstatus/black.png";
+import yellow from "@/assets/images/carstatus/yellow.png";
+import white from "@/assets/images/carstatus/white.png";
+import grayImg from "@/assets/images/carstatus/grayImg.png";
+import redImg from "@/assets/images/carstatus/redImg.png";
+import blueImg from "@/assets/images/carstatus/blueImg.png";
+import greenImg from "@/assets/images/carstatus/greenImg.png";
+import { constants } from "crypto";
 export default {
   name: "operativeMap",
   components: {
     VTable,
     LoadingButton
   },
+  filters: {
+    twodecimal(x) {
+      var f = parseFloat(x);
+      if (isNaN(f)) {
+        return false;
+      }
+      var f = Math.round(x * 100) / 100;
+      var s = f.toString();
+      var rs = s.indexOf(".");
+      if (rs < 0) {
+        rs = s.length;
+        s += ".";
+      }
+      while (s.length <= rs + 1) {
+        s += "0";
+      }
+      return s;
+    }
+  },
   data() {
     let self = this;
     return {
+      switchTitle:'强制下线',
+      offlineModal: false,//强制下线弹窗
+      offlineRemark: '',//强制下线备注
+      MarkTime: 0,
       allstatus: "allstatus",
       cityvalue: [],
       cluster: null,
@@ -495,11 +627,12 @@ export default {
       carlistdata: {
         total: 0,
         current: 1,
-        pageSize: 5,
+        pageSize: 10000,
         height: 350,
         width: 1300,
         parColumns: [],
-        parTableData: []
+        parTableData: [],
+        pageSizeOpts: [5, 10, 20, 30, 40]
       },
       zoom: 4, // 地图显示级别//全国范围
       center: [116.286278, 34.22237],
@@ -532,7 +665,7 @@ export default {
       },
       enclosureTypeData: {
         enclosuretype: "",
-        enclosureitem: ""
+        enclosureitem: []
       },
       realTimeData: {},
       carBasicMsg: {},
@@ -543,43 +676,47 @@ export default {
       currentRenderSite: [], // 渲染站点点集合
       railTypeList: [
         {
-          value: 1,
+          value: '1',
           label: "运营围栏"
         },
         {
-          value: 2,
+          value: '2',
           label: "流水奖励围栏"
+        },
+        {
+          value: '3',
+          label: "营销活动围栏"
         }
       ],
       carStatusList: [
         {
-          value: 3,
+          value: '3',
           label: "服务中"
         },
         {
-          value: 2,
+          value: '2',
           label: "接乘中"
         },
         {
-          value: 1,
+          value: '1',
           label: "巡游中"
         },
         {
-          value: 0,
+          value: '0',
           label: "下线"
         }
       ],
       businessTypeList: [
         {
-          value: 2,
+          value: '2',
           label: "专车"
         },
         {
-          value: 4,
+          value: '4',
           label: "快车"
         },
         {
-          value: 1,
+          value: '1',
           label: "出租车"
         }
       ],
@@ -596,7 +733,8 @@ export default {
       heatmap: null, //热力图对象,
       polygonVal: "", // 电子围栏uuid存储
       railType: "", // 司管id存储
-      isloading: false // 按钮请求态
+      isloading: false, // 按钮请求态
+      isClearloading: false // 清空按钮请求态
     };
   },
   created() {
@@ -652,6 +790,17 @@ export default {
           return "其他";
       }
     },
+    elefenceClolr(){
+      let type = this.enclosureTypeData.enclosuretype
+      switch (type) {
+        case "1":
+          return '#2196f3'
+        case "2":
+          return '#009688'
+        default:
+          return '#e91e63'
+      }
+    },
     comCheckStatus() {
       let checkGroup = JSON.parse(
         JSON.stringify(this.othermarkSelect.checkAllGroup)
@@ -663,24 +812,50 @@ export default {
       return current;
     }
   },
-  watch: {
-    messagesent: function() {
-      if (!this.messagesent) {
-        this.addmsg = "";
+  mounted() {
+    this.$nextTick(function () {
+      let that = this
+      document.addEventListener('click',()=>{
+        this.arrowtoright()
+      })
+      let Modals = document.getElementsByClassName('vertical-center-modal')
+      for(let val of Modals){
+        val.addEventListener('click',(e)=>{
+          e.stopPropagation();
+        })
       }
-    },
-    carslists: function() {
-      if (!this.carslists) {
-        this.total = 0;
-        this.current = 1;
-        this.pageSize = 5;
-      }
-    }
+    })
   },
-  mounted() {},
   methods: {
+    // 强制下线/允许上线
+    axiosOffline(){
+      // 提交短信发送
+      if (!this.offlineRemark) {
+        this.$Message.warning("请填写备注内容");
+        return false;
+      }
+      let that = this
+      let params = {
+        driverUuid: this.driverMsgData.uuid,
+        operateRemark: this.offlineRemark
+      };
+      let axiosFun = this.driverMsgData.status===1?axiosForcedOffline:axiosAllowOnline
+      axiosFun(params).then(res => {
+        if(res.data.success){
+          this.offlineModal = false;
+          this.offlineRemark = ''
+          this.$Message.success(res.data.msg||'操作成功');
+          this.getDriverDetailMsg({driverUuid: that.driverMsgData.uuid})
+          this.refreshMap()
+        }else{
+          this.$Message.success(res.data.msg||'操作失败');
+        }
+        
+      })
+    },
     getCurentLocation() {
       let that = this;
+      let defaultCityCode = '320100'
       let citysearch = new AMap.CitySearch();
       citysearch.getLocalCity(function(status, result) {
         if (status === "complete" && result.info === "OK") {
@@ -691,17 +866,22 @@ export default {
             let cityArray = JSON.parse(JSON.stringify(that.citysdata));
             let city_province = [];
             cityArray.forEach(item => {
-              if (item.cityID == result.adcode) {
+              if (item.cityID == defaultCityCode) {
                 city_province.push(item.province);
-                city_province = [item.provinceID, result.adcode];
+                city_province = [item.provinceID, item.cityID];
               }
             });
-            that.cityvalue = city_province;
-            that.chooseCity(city_province);
+            if(city_province.length>0){
+              that.cityvalue = city_province;
+              that.chooseCity(city_province);
+            }else{
+              that.cityvalue = []
+            }
           }
         }
       });
     },
+    // 根据城市获取运营商
     getOptationByCitycode(cityCode) {
       // 根据城市获取运营商
       this.agentList = []; // 切换城市时清空运营商列表，避免无返回依存
@@ -716,13 +896,14 @@ export default {
         })
         .catch(err => {});
     },
-    getAgentByoperation(agentUuid) {
+    // 根据运营商获取司管
+    getAgentByoperation(agentUuiddata) {
       // 根据运营商获取司管
-      if (!agentUuid) {
+      if (!agentUuiddata.length) {
         return;
       }
       this.driverManagerList = []; // 切换城市时清空司管列表，避免无返回依存
-      getOpmanerByOrgan({ agentUuid })
+      getOpmanerByOrgan({ agentUuids: agentUuiddata })
         .then(res => {
           let driverManagerList = res.data.data;
           driverManagerList.forEach(item => {
@@ -733,17 +914,61 @@ export default {
         })
         .catch(err => {});
     },
+    // 根据围栏类型获取围栏
+    getElefenceList(val,isRefearsh) {
+      !isRefearsh && (this.enclosureTypeData.enclosureitem = [])
+      if (!val) {
+        return;
+      }
+      let cityCodeData = this.chooseCityMsg;
+      this.railType = val;
+      getElefenServiceSelect({
+        cityCode: cityCodeData.cityID,
+        railType: val
+      })
+        .then(res => {
+          let map = this.$refs.map.$$getInstance();
+          let polygons = map.getAllOverlays("polygon"); //获取地图上所有得图形区域
+          this.elefenlist = res.data.data;
+          // this.enclosureTypeData.enclosureitem = "";
+          // polygons.length && map.remove(polygons); // 清楚地图上的所有图形区域
+          // this.polygons && this.polygons.length && map.add(this.polygons); // 添加行政边界图
+          // this.polygons &&
+          //   this.polygons.length &&
+          //   map.setFitView(this.polygons); //视口自适应
+        })
+        .catch(err => {});
+    },
+    // 清除所有电子围栏
+    cllearElefence(){
+      this.elefenlist = []//清除选择围栏列表
+      this.polygonVal = []; // 清除存储的当前选中的围栏图形
+      // 清除电子围栏筛选条件
+      this.$set(this.enclosureTypeData,'enclosuretype','')
+      this.$set(this.enclosureTypeData,'enclosureitem',[])
+      // 清除地图电子围栏
+      let map = this.$refs.map.$$getInstance();
+      let polygons = map.getAllOverlays("polygon"); //获取地图上所有得图形区域
+      map.remove(polygons);
+      this.polygons && this.polygons.length && map.add(this.polygons); // 添加行政边界图
+    },
+    // 添加电子围栏
     renderElefence(val) {
+      // 渲染电子围栏
       let eleList = JSON.parse(JSON.stringify(this.elefenlist));
       let map = this.$refs.map.$$getInstance();
       let polygons = map.getAllOverlays("polygon"); //获取地图上所有得图形区域
       this.polygonVal = val; // 存储当前选中的围栏图形
       polygons.length && map.remove(polygons); // 清楚地图上的所有图形区域
       this.polygons && this.polygons.length && map.add(this.polygons); // 添加行政边界图
-      this.polygons && this.polygons.length && map.setFitView(this.polygons); //视口自适应
+      // 保持当前比例尺
+      // this.polygons && this.polygons.length && map.setFitView(this.polygons); //视口自适应
+      if(val.length===0){
+        return false
+      }
       this.overlays = [];
       eleList.forEach(item => {
-        if (item.uuid == val) {
+        if (val.indexOf(item.uuid)>-1) {
           let scopes = item.scope;
           let plioylist = scopes.split("&");
           let polyitem = [];
@@ -760,12 +985,12 @@ export default {
             this.overlays.push(
               new AMap.Polygon({
                 path: currentArray,
-                fillColor: "#00b0ff",
-                strokeColor: "#80d8ff",
-                strokeWeight: 6,
-                strokeOpacity: 0.2,
-                fillOpacity: 0.4,
-                zIndex: 50
+                fillColor: this.elefenceClolr,
+                strokeColor: this.elefenceClolr,
+                strokeWeight: 2,
+                strokeOpacity: 0.3,
+                fillOpacity: 0.15,
+                zIndex: 1
               })
             );
           });
@@ -775,6 +1000,7 @@ export default {
         }
       });
     },
+    // 获取司机详情
     getDriverDetailMsg(data) {
       // 获取司机详情信息
       let that = this;
@@ -786,6 +1012,7 @@ export default {
           that.driverMsgData = {};
         });
     },
+    // 获取车辆基本信息
     getCarByVinMsg(data) {
       // 获取车辆基本信息
       getCarByVin({ otherIndex: data.vin })
@@ -796,6 +1023,7 @@ export default {
           this.carBasicMsg = {};
         });
     },
+    // 获取车辆实时信息
     getfindOneByVinMsg(data) {
       // 获取车辆实时信息
       findOneByVin({ otherIndex: data.vin })
@@ -819,13 +1047,14 @@ export default {
               }
             );
           } else {
-            this.realTimeData = realTimeData
+            this.realTimeData = realTimeData;
           }
         })
         .catch(err => {
           this.realTimeData = {};
         });
     },
+    // 获取城市列表（已开通）
     getCityList() {
       let data = {};
       const ergodic = arrays => {
@@ -849,22 +1078,33 @@ export default {
       );
       this.citysdata = ergodic(citylistfromlocal);
     },
+    // 标记汽车
     renderMarkers(fakeAarry, valcitycode) {
       // 生成点'城市地理位置信息表聚合标记点
       let that = this;
       let map = this.$refs.map.$$getInstance();
+      // 0: 下线, 1:  巡游中, 2: 接乘中, 3:  服务中
+      // 2：专车， 4： 快车， 1： 出租车
       const setImg = status => {
         switch (status) {
-          case 3:
-            return greencar;
-          case 2:
-            return bluecar;
           case 1:
-            return redcar;
+            return yellow;
+          case 2:
+            return black;
+          case 4:
+            return white;
+        }
+      };
+      const carStatus = status => {
+        switch (status) {
           case 0:
-            return graycar;
-          default:
-            return graycar;
+            return grayImg;
+          case 1:
+            return redImg;
+          case 2:
+            return blueImg;
+          case 3:
+            return greenImg;
         }
       };
       if (this.mmkCarData.length > 0) {
@@ -873,19 +1113,25 @@ export default {
       }
       let mmkCarData = [];
       let currentData = [];
-      let latalon = []
+      let latalon = [];
       fakeAarry.forEach(item => {
         let markers = [];
         let { currentLng, currentLat } = item;
-        latalon = [currentLng, currentLat]
+        latalon = [currentLng, currentLat];
         markers = new AMap.Marker({
           position: [currentLng, currentLat],
+          offset: new AMap.Pixel(-26, -23),
           icon: new AMap.Icon({
-            size: new AMap.Size(40, 50), //图标的大小
-            image: setImg(item.driverStatus),
-            imageOffset: new AMap.Pixel(0, 0)
+            size: new AMap.Size(35, 46), //图标的大小
+            image: setImg(item.bussinessId)
           }),
-          angle: item.direction,
+          shadow: new AMap.Icon({
+            size: new AMap.Size(35, 46), //图标的大小
+            image: carStatus(item.driverStatus)
+          }),
+          zIndex: 88,
+          angle: 0,
+          // angle: item.direction,
           extData: item,
           clickable: true
         });
@@ -898,14 +1144,15 @@ export default {
           // this.setAnimation("AMAP_ANIMATION_DROP");
           that.sitePoints = false;
           that.choosecar = true;
+          that.MarkTime = new Date().getTime()
         });
         currentData.push(markers);
       });
       that.mmkCarData = currentData;
       that.cluster.addMarkers(currentData);
-      that.cluster.setMaxZoom(16)
+      that.cluster.setMaxZoom(16);
       if (this.currentChangeData && this.currentChangeData.carNoOrMobile) {
-        map.panTo(latalon)
+        map.panTo(latalon);
       }
     },
     compositeArray(tragetAarry) {
@@ -915,34 +1162,38 @@ export default {
       let currentData = [];
       let siteData = that.siteData;
       let siteArry = Object.keys(siteData);
+      let map = this.$refs.map.$$getInstance() || this.mymap;
       const mapixel = type => {
         switch (type) {
-          case 1:
-            return new AMap.Pixel(-5, -5); // 充电桩
           case 0:
             return new AMap.Pixel(-158, -5); // 加油站
+          case 1:
+            return new AMap.Pixel(-5, -5); // 充电站
           case 2:
             return new AMap.Pixel(-238, -5); // 充气站
-          case 4:
-            return new AMap.Pixel(-318, -5); // 司机之家
           case 3:
             return new AMap.Pixel(-80, -5); // 维修站
+          case 4:
+            return new AMap.Pixel(-318, -5); // 司机之家
         }
       };
+      const zIndexMap = [19, 20, 18, 16, 17]
       if (this.currentRenderSite.length > 0) {
         // clear markers
-        this.cluster.removeMarkers(this.currentRenderSite);
+        map.remove(this.currentRenderSite);
         this.currentRenderSite = [];
       }
       tragetAarry.forEach(item => {
         let { longitude, latitude, type } = item;
         markers = new AMap.Marker({
           position: [longitude, latitude],
+          offset: new AMap.Pixel(-20, -25),
           icon: new AMap.Icon({
             size: new AMap.Size(40, 50), //图标的大小
             image: siteImg,
             imageOffset: mapixel(type)
           }),
+          zIndex: zIndexMap[type],
           clickable: true,
           extData: item
         });
@@ -954,13 +1205,13 @@ export default {
           // this.setAnimation("AMAP_ANIMATION_DROP");
           that.sitePoints = true;
           that.choosecar = true;
+          that.MarkTime = new Date().getTime()
         });
         currentData.push(markers);
       });
       that.mmkSiteData = that.mmkSiteData.concat(currentData); // 存储Markers点
       that.currentRenderSite = currentData;
-      that.cluster.addMarkers(currentData);
-      that.cluster.setMaxZoom(16)
+      map.add(currentData)
     },
     checkAllGroupChange(data) {
       // 下拉列表每一个checkbox点击事件。以及获取站点信息事件调用
@@ -988,7 +1239,9 @@ export default {
       } else {
         if (this.currentRenderSite.length > 0) {
           // clear markers
-          this.cluster.removeMarkers(this.currentRenderSite);
+          // this.cluster.removeMarkers(this.currentRenderSite);
+          let map = this.$refs.map.$$getInstance();
+          map.remove(this.currentRenderSite);
           this.currentRenderSite = [];
         }
       }
@@ -1012,17 +1265,26 @@ export default {
       that.getCarByVinMsg(data); // 获取车辆信息
     },
     iptevent(e) {},
-    arrowtoright() {
-      // 隐藏车辆信息弹窗
-      this.choosecar = false;
-      this.mmkSiteData.length &&
-        this.mmkSiteData.forEach(item => {
-          item.setAnimation("AMAP_ANIMATION_NONE");
-        });
-      this.mmkCarData.length &&
-        this.mmkCarData.forEach(item => {
-          item.setAnimation("AMAP_ANIMATION_NONE");
-        });
+    arrowtoright(isClose) {
+      if(!this.choosecar){
+        return false
+      }
+      // 因为Marker点击事件中，没有阻止冒泡的功能，方出此下策。
+      let Time = new Date().getTime()
+      let isBlankClose = Time-this.MarkTime>500?true:false
+      if(isClose || isBlankClose){
+        // 隐藏车辆信息弹窗
+        this.choosecar = false;
+        this.mmkSiteData.length &&
+          this.mmkSiteData.forEach(item => {
+            item.setAnimation("AMAP_ANIMATION_NONE");
+          });
+        this.mmkCarData.length &&
+          this.mmkCarData.forEach(item => {
+            item.setAnimation("AMAP_ANIMATION_NONE");
+          });
+      }
+      
     },
     getTrafficTileLayer() {
       //获取实时路况
@@ -1032,7 +1294,7 @@ export default {
         this.isVisibleToggle = false;
       } else {
         this.trafficLayer = new AMap.TileLayer.Traffic({
-          zIndex: 10
+          zIndex: 66
         });
         this.trafficLayer && this.trafficLayer.setMap(map);
         this.trafficLayer && this.trafficLayer.show();
@@ -1081,21 +1343,6 @@ export default {
         .catch(err => {});
       this.carslists = true;
     },
-    toCarsManger() {
-      let vin = this.currentCarMsg.vin;
-      getCarByVin({ otherIndex: vin })
-        .then(res => {
-          let carBasicMsg = res.data.data;
-          this.$router.push({
-            name: "vehicle-center",
-            params: { id: vin, businessType: carBasicMsg.businessType }
-          });
-        })
-        .catch(err => {
-          this.$router.push({ name: "vehicle-center", params: { id: vin } });
-        });
-      // console.log("去往车辆管理页面,携带相关参数,在车辆管理页展示实时相关信息")
-    },
     toSightDriver(driverUuid) {
       // console.log("点击司机详情，跳转到司机详情页面。");
       if (!driverUuid) {
@@ -1124,11 +1371,11 @@ export default {
       let valcitycode = value.length > 1 ? value[1] : value[0];
       let polygons = map.getAllOverlays("polygon"); // 切换城市时 假如地图上存在围栏则清空
       polygons.length && map.remove(polygons);
-      this.polygonVal = "";
+      this.polygonVal = [];
       this.enclosureTypeData = {
         // 重置已选择的围栏select
         enclosuretype: "",
-        enclosureitem: ""
+        enclosureitem: []
       };
       // 绘制区域图
       if (!this.district) {
@@ -1179,24 +1426,58 @@ export default {
       if (this.oldcheckdata.length) {
         this.getServiceSitePageList(this.oldcheckdata);
       }
+      AMapUI.loadUI(['control/BasicControl'], function(BasicControl) {
+        map.addControl(new BasicControl.Zoom({
+          position: 'rb', //left top，左上角
+          showZoomNum: false //显示zoom值
+        }));
+      })
+      map.addControl(new AMap.Scale());
     },
-    onSearchBtn(chooseCityMsg) {
-      this.isloading = true;
+    onSearchBtn(chooseCityMsg,isClear) {
+      if (!isClear){
+        this.isloading = true;
+      } else {
+        this.isClearloading = true;
+        this.driverManagerList.splice(0,this.driverManagerList.length)
+        this.currentChangeData = {
+          agentUUID: "", // 运营商id
+          driverManagerId: "", // 司管id
+          carType: "", // 1：出租车、2：专车、3：跨城拼车、4：快车、5：货的、6：骑手、7：搬家、8：展会
+          operationStatus: "", // 0:待运营，1:待绑定，2:运营中，3:维护中，4：退出运营，5：冻结
+          carNoOrMobile: "" // 	车牌或电话
+        };
+      }
       this.onSearchApi(chooseCityMsg);
     },
     onSearchApi(addData) {
       // 城市车辆点标记以及左侧数据列表请求方法
       let that = this;
+      let selectDataCopy = {...this.currentChangeData}
+      if (selectDataCopy.agentUUID) {
+        if (selectDataCopy.agentUUID.constructor === Array) {
+          selectDataCopy.agentUUID = selectDataCopy.agentUUID.join(',')
+        }
+      }
+      if (selectDataCopy.driverManagerId) {
+        if (selectDataCopy.driverManagerId.constructor === Array) {
+          selectDataCopy.driverManagerId = selectDataCopy.driverManagerId.join(',')
+        }
+      }
       let data = Object.assign(
         {},
-        this.currentChangeData,
+        selectDataCopy,
         addData || { cityID: this.chooseCityMsg.cityID }
       );
       queryCarListByRemote(data)
         .then(res => {
           let markersData = res.data.data || [];
+          if (!markersData.length) {
+            that.$Message.warning('没有查询到相关车辆')
+          }
           that.citychoicest = true;
-          that.isloading = false;
+          this.isloading = false;
+          this.isClearloading = false;
           that.renderMarkers(
             markersData,
             (addData && addData.cityID) || this.chooseCityMsg.cityID
@@ -1205,6 +1486,7 @@ export default {
         .catch(err => {});
     },
     carTypeChoice(val) {
+      return false
       this.currentChangeData.carType = val;
       this.onSearchApi();
     },
@@ -1236,7 +1518,8 @@ export default {
       if (!this.ishowThermogram) {
         this.heatmap = new AMap.Heatmap(map, {
           radius: 25, //给定半径
-          opacity: [0, 0.8]
+          opacity: [0, 0.4],
+          zIndex: 77
         });
         //设置数据集：该数据为北京部分“公园”数据
         this.heatmap.setDataSet({
@@ -1250,12 +1533,11 @@ export default {
         this.ishowThermogram = false;
       }
     },
-    refreshMap() {
-      this.isrefresh = !this.isrefresh;
-      setTimeout(() => {
-        this.isrefresh = false;
-      }, 1000);
-      this.choosecar = false;
+    refreshMap(isClick) {
+      if(isClick){
+        this.isrefresh = true;
+        this.choosecar = false;
+      }
       if (this.oldcheckdata.length) {
         this.getServiceSitePageList(this.oldcheckdata);
       }
@@ -1264,10 +1546,28 @@ export default {
         this.getOptationByCitycode(this.chooseCityMsg.cityID);
       }
       if (this.railType) {
-        
+        this.getElefenceList(this.railType,true);
+        this.renderElefence(this.enclosureTypeData.enclosureitem)
       }
       if (this.polygonVal) {
         this.renderElefence(this.polygonVal);
+      }
+      isClick && setTimeout(() => {
+        this.isrefresh = false;
+      }, 1000);
+    }
+  },
+  watch: {
+    messagesent: function() {
+      if (!this.messagesent) {
+        this.addmsg = "";
+      }
+    },
+    carslists: function() {
+      if (!this.carslists) {
+        this.total = 0;
+        this.current = 1;
+        this.pageSize = 5;
       }
     }
   }

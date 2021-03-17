@@ -14,15 +14,14 @@
 </template>
 
 <script>
-import {getOrderList} from '@/api/vehicle.js'
+import { getOrderList } from '@/api/vehicle.js'
+import { orderMainStatusMap } from '@/libs/status-map'
 
 export default {
     name:'order-list',
-    created(){
-        this.getList()
-    },
     data(){
         return{
+            orderMainStatusMap,
             orderData:[],
             orderColumns:[
                 {
@@ -124,7 +123,7 @@ export default {
                     minWidth: 100,
                     tooltip: true,
                     render:(h,params) =>{
-                        return h('div', params.row.mainStatus)
+                        return h('div', orderMainStatusMap[params.row.mainStatus])
                     }
                 },
                 {
@@ -136,7 +135,7 @@ export default {
                 {
                     key:'routeNo',
                     title: '订单编号',
-                    minWidth: 210,
+                    minWidth: 190,
                     tooltip: true,
                     render:(h,params)=>{
                         return h('div',[
@@ -156,6 +155,9 @@ export default {
             current: 1,
             pageSize: 10,
         }
+    },
+    created(){
+        this.getList()
     },
     methods:{
         getList(){
@@ -180,12 +182,7 @@ export default {
             this.getList()
         },
         goToOrderDetail(id){
-            this.$router.push({
-                name:'order-detail',
-                params:{
-                    id: id
-                }
-            })
+            this.$router.push({name:'order-detail',params:{id:id}})
         }
     }
 }

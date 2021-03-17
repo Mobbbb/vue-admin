@@ -43,8 +43,8 @@ import Language from './components/language'
 import ErrorStore from './components/error-store'
 import { mapMutations, mapActions, mapGetters } from 'vuex'
 import { getNewTagList, getNextRoute, routeEqual } from '@/libs/util'
-import minLogo from '@/assets/images/logo-min.png'
-import maxLogo from '@/assets/images/logo.png'
+import minLogo from '@/assets/images/logo-min.jpg'
+import maxLogo from '@/assets/images/logo.jpg'
 import './main.less'
 export default {
   name: 'Main',
@@ -123,18 +123,44 @@ export default {
       this.collapsed = state
     },
     handleCloseTag (res, type, route) {
+      let closeAlert = route && route.meta && route.meta.closeAlert || false
       if (type === 'all') {
         this.turnToPage(this.$config.homeName)
-      } else if (routeEqual(this.$route, route)) {
-        if (type !== 'others') {
+        this.setTagNavList(res)
+      } else if (routeEqual(this.$route, route)) { // 在该页面关闭该页面
+        if (type !== 'others') { // 点击单个关闭按钮
           const nextRoute = getNextRoute(this.tagNavList, route)
-          this.$router.push(nextRoute)
+          if(closeAlert) {
+            this.$Modal.confirm({
+              title: '提示',
+              content: '切换页面数据将丢失，您确定要离开吗？',
+              onOk: () => {
+                this.$router.push(nextRoute)
+                this.setTagNavList(res)
+              }
+            })
+          } else {
+            this.$router.push(nextRoute)
+            this.setTagNavList(res)
+          }
+        } else { // 关闭其他
+          this.setTagNavList(res)
         }
+      } else if (!routeEqual(this.$route, route)) {
+        this.setTagNavList(res)
       }
-      this.setTagNavList(res)
     },
     handleClick (item) {
-      this.turnToPage(item)
+      let closeAlert = this.$route && this.$route.meta && this.$route.meta.closeAlert || false
+      if(closeAlert && item.name !== this.$route.name) {
+        this.$Modal.confirm({
+          title: '提示',
+          content: '切换页面数据将丢失，您确定要离开吗？',
+          onOk: () => {
+            this.turnToPage(item)
+          }
+        })
+      } else this.turnToPage(item)
     }
   },
   watch: {

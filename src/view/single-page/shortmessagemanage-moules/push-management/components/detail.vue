@@ -1,6 +1,6 @@
 <template>
     <div class="container_box">
-         <div class="detail">
+        <div class="detail">
              <div class="detail_item">
                 <span>Push标题 :</span>
                 <span class="item_content">{{theInfo.title}}</span>
@@ -20,6 +20,7 @@
                 <span class="item_content" v-if="theInfo.target==1 && theInfo.pushRole==2">  指定乘客</span>
                 <span class="item_content" v-if="theInfo.target==2"> 指定条件</span>
                 <span class="item_content" v-if="theInfo.target==3"> 批量</span>
+                <span class="item_content" v-if="theInfo.target==4"> 用户分群</span>
              </div>
              <div class="detail_item">
                 <span style="padding-left: 73px;"></span>
@@ -32,8 +33,9 @@
                 <span v-if="theInfo.cityName">
                     <span v-for="(item, index) in theInfo.cityName" :key="index"> {{item}}</span>
                 </span>
+                <span v-if="theInfo.target==3"><a @click="exportList">导出批量列表</a></span>
+                <span v-if="theInfo.target==4">{{theInfo.userGroupName}}</span>
                 <span class="item_content">{{theInfo.pushRangeDetail}}</span>
-                <span v-if="theInfo.target==3"> <a @click="exportList">导出批量列表</a></span>
              </div>
 
              <div class="detail_item">
@@ -48,7 +50,7 @@
                 <span>放弃时间 :</span>
                  <span class="item_content">{{theInfo.giveUpOn}}</span>
              </div>
-         </div>
+        </div>
     </div>
 </template>
 

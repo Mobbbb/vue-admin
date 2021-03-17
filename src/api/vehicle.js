@@ -169,10 +169,29 @@ export const getBrandList = (params) => {
     method: 'get'
   })
 }
-//远程控制
+
+// 远程控制
 export const controlCar = (data) => {
   return axios.request({
     url: 'admin/carManager/controlCar',
+    data,
+    method: 'post'
+  })
+}
+
+// 车机管理-下载日志
+export const downloadLog = (data) => {
+  return axios.request({
+    url: '/admin/carManager/downloadLog',
+    data,
+    method: 'post'
+  })
+}
+
+// 车机管理-操作记录列表
+export const getHistoryList = (data) => {
+  return axios.request({
+    url: '/admin/carManager/operationHistory',
     data,
     method: 'post'
   })

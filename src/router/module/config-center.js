@@ -27,6 +27,16 @@ export default {
       component: () => import('@/view/single-page/config-modules/city-control/index.vue')
     },
     {
+      path: 'city_control_operation',
+      name: 'city_control_operation',
+      meta: {
+        title: '策略管理',
+        hideInMenu: true,
+        parentName: 'city_control'
+      },
+      component: () => import('@/view/single-page/config-modules/city-control/operation.vue')
+    },
+    {
       path: 'site_control',
       name: 'site_control',
       meta: {
@@ -91,6 +101,22 @@ export default {
         title: '电子围栏管理'
       },
       component: () => import('@/view/single-page/config-modules/elecfence-control/index.vue')
-    }
+    },
+    {
+      path: 'car-machine',
+      name: 'car-machine',
+      meta: {
+        title: '车机远程管理'
+      },
+      component: () => import('@/view/single-page/config-modules/car-machine/index.vue')
+    },
+    {
+      path: 'approval_control',
+      name: 'approval_control',
+      meta: {
+        title: '审批管理'
+      },
+      component: () => import('@/view/single-page/config-modules/approval-control/index.vue')
+    },
   ]
 }

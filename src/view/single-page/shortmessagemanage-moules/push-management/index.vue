@@ -1,22 +1,17 @@
 <template>
 <div class="container1">
-    <searchList :inputList="inputList" @on-search='handleSearch' @on-reset="reset"></searchList>
-       <Row>
-            <Col span="8">
-                <Button type="primary" @click="goToAddPush" v-hasAuth="'push-center-add'">新增</Button>
-            </Col>
-        </Row>
-    <Row :style="{marginTop:'20px'}">
-        <VTable 
-            :total="total" 
-            :current="current" 
-            :pageSize="pageSize" 
-            :parColumns="pushColumn" 
-            :parTableData="pushList" 
-            @changePage="changePage" 
-            @changePageSize="changePageSize">
-        </VTable>
-    </Row>
+    <SearchList :inputList="inputList" @on-search='handleSearch' @on-reset="reset"></SearchList>
+    <Button type="primary" @click="goToAddPush" v-hasAuth="'push-center-add'">新增</Button>
+    <VTable 
+        :total="total" 
+        :current="current"
+        :pageSize="pageSize" 
+        :parColumns="pushColumn" 
+        :parTableData="pushList" 
+        @changePage="changePage" 
+        @changePageSize="changePageSize"
+        style="margin-top: 25px;">
+    </VTable>
     <Modal v-model="detailModal" title="Push消息详情">
         <DetailTag :theInfo='detailInfo'></DetailTag>
     </Modal>
@@ -105,31 +100,11 @@ export default {
                                     display: (params.row.target == 3) ? 'inline-block' : 'none'
                                 }
                             },'批量'),
-                        ])
-                    }
-                },
-                {
-                    key: 'sex',
-                    title: '性别',
-                    minWidth: 100,
-                    tooltip: true,
-                    render:(j,params)=>{
-                        return j('div',[
                             j('span',{
                                 style:{
-                                    display: (params.row.sex == 1) ? 'inline-block' : 'none'
+                                    display: (params.row.target == 4) ? 'inline-block' : 'none'
                                 }
-                            },'全部'),
-                            j('span',{
-                                style:{
-                                    display: (params.row.sex == 2) ? 'inline-block' : 'none'
-                                }
-                            },'男'),
-                            j('span',{
-                                style:{
-                                    display: (params.row.sex == 3) ? 'inline-block' : 'none'
-                                }
-                            },'女'),
+                            },'用户分群'),
                         ])
                     }
                 },

@@ -160,13 +160,13 @@ export default {
           {required: true, message: '请输入', trigger: 'change'}
         ],
         certify: [
-          {required: true,type:'date', message: '请选择', trigger: 'change'}
+          {required: true, type:'date', message: '请选择', trigger: 'change'}
         ],
         start: [
-          {validator: validateStart, trigger: 'change'}
+          {required: true, validator: validateStart, trigger: 'change'}
         ],
         stop: [
-          {validator: validateEnd, trigger: 'change'}
+          {required: true, validator: validateEnd, trigger: 'change'}
         ],
         state: [
           {required: true, message: '请输入', trigger: 'change'}
@@ -206,7 +206,7 @@ export default {
             this.$Message.error('保存失败!');
           })
         } else {
-          this.$Message.error('保存失败!');
+          this.$Message.error('信息有误或未填写完整');
         }
       })
     }

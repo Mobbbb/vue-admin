@@ -4,8 +4,8 @@
   <Spin v-show="isShowSpin" size="large" fix></Spin>
   <div v-show="!isShowSpin" class="map-outbox">
     <ul class="color-tag">
-      <li v-if="planList.length" @click="isPlan=!isPlan;togglePath()" :class="{'color-org':isPlan}">规划路径</li>
-      <li v-if="isOrder" @click="isActual=!isActual;togglePath()" :class="{'color-green':isActual}">实际轨迹</li>
+      <li v-if="isPlanBtn" @click="isPlan=!isPlan;togglePath()" :class="{'color-org':isPlan}">规划路径</li>
+      <li v-if="isActualBtn" @click="isActual=!isActual;togglePath()" :class="{'color-green':isActual}">实际轨迹</li>
     </ul>
     <div id="container"></div>
     <div class="map-control" v-show="isActual">
@@ -35,7 +35,7 @@
 
 <script>
 import { setTimeout, setInterval } from "timers";
-import car from "@/assets/images/carstatus/grey.png";
+import car from "@/assets/images/carstatus/white2.png";
 import {axiosPlanningPath,axiosActualTrack} from '@/api/order.js'
 const tagMap = {
   1: '单',
@@ -62,7 +62,8 @@ export default {
   data() {
     return {
       isShowSpin:true,
-      isOrder: true,//是否有司机接单，0,true未接单，1,false已接单
+      isActualBtn: true,//是否显示实际轨迹按钮，0，不显示，1，显示，逻辑：是否有司机接单，0,true未接单，1,false已接单
+      isPlanBtn: true,//是否显示规划路径按钮，，0，不显示，1，显示，逻辑：司机点击选择完成规划路径才显示规划路径按钮
       pathSimplifierIns:null,//实际巡航轨迹的巡航器
       isPlan: false,//规划路线是否显示
       isActual: false,//规划路线是否显示
@@ -119,6 +120,13 @@ export default {
       let that = this
       axiosPlanningPath({ routeUuid: this.id }).then(res => {
         let resData = res.data.data
+        that.isPlanBtn = resData.isShow===1?true:false
+        if(!that.isPlanBtn){
+          this.newMap()
+          this.isShowSpin = false
+          this.drag();
+          return false
+        }
         // 规划路线标记点
         let iconOffsetArr = []
         resData.originPointDto && iconOffsetArr.push({
@@ -150,8 +158,8 @@ export default {
       let that = this
       axiosActualTrack({ routeUuid: this.id }).then(res => {
         let resData = res.data.data
-        that.isOrder = resData.isOrder===1?true:false
-        if(!that.isOrder){
+        that.isActualBtn = resData.isOrder===1?true:false
+        if(!that.isActualBtn){
           return false
         }
 
@@ -160,10 +168,11 @@ export default {
         resData.keyPoints.forEach(item=>{
           iconList.push({
             iconContent: that.iconFun(that.tagMap[item.type], item.type===7?'light-icon':"blue-icon"),
-            LngLat: item
+            LngLat: item,
+            text:that.tagMap[item.type]
           })
         })
-        that.actualMarkList = that.markerFun(iconList);
+        that.actualMarkList = that.markerFun(iconList,true);
 
         // 数据结构构件
         let trackList = resData.track
@@ -192,6 +201,9 @@ export default {
     },
     // 规划路径
     setPlanPath() {
+      if(!this.isPlanBtn){
+        return false
+      }
       let that = this;
       let planColor = "#ff8533";
       
@@ -255,12 +267,20 @@ export default {
     },
     // 实际路径
     setActualPath() {
-      if(!this.isOrder){
+      if(!this.isActualBtn){
         return false
       }
       let that = this;
       let relColor = "#2e9c08";
       let passColor = "#46c51a";
+
+      this.isOnSlider = false //是否为手动鼠标拉动进度条
+      this.playIcon = "resume" //开始按钮是重新开始还是继续
+      this.passedTime = "00:00:00" //已经走了的时间
+      this.isPlay = false //是否为播放
+      this.sliderVal = 0 //进度条滑动速度
+      this.speed = 100 //初始速度，km、h
+      this.times = 1 //几倍速度播放
   
       // 将 markers 添加到地图
       that.map.add(that.actualMarkList);
@@ -295,14 +315,14 @@ export default {
             return pathData.path;
           },
           getHoverTitle: function(pathData, pathIndex, pointIndex) {
-            return null;
+            return null
           },
           autoSetFitView: true,
           // 巡航器样式
           renderOptions: {
             pathNavigatorStyle: {
               initRotateDegree: 0,
-              width: 32,
+              width: 20,
               height: 32,
               autoRotate: true,
               lineJoin: "round",
@@ -346,16 +366,20 @@ export default {
           }
         ]);
         that.pathSimplifierIns.setFitView(-1)
+         
+        let startSpeed = that.speedFun(
+          that.actualList[0],
+          that.actualList[1],
+          startPoint.intervalTime
+        )
+        startSpeed===0 && (startSpeed=0.01)
 
         //对第一条线路（即索引 0）创建一个巡航器
         that.navgtr = that.pathSimplifierIns.createPathNavigator(0, {
           loop: false, //循环播放
-          speed: that.speedFun(
-            that.actualList[0],
-            that.actualList[1],
-            startPoint.intervalTime
-          ) * that.times //巡航速度，单位千米/小时
+          speed: startSpeed * that.times //巡航速度，单位千米/小时
         });
+       
         //构建自定义信息窗体
         let infoContent = `<p class="info-window">剩余<span>${
           startPoint.cssEndurance
@@ -376,6 +400,7 @@ export default {
           // 计算下一个距离速度
           let point = trackList[idx]
           if (idx<len-1) {
+            point.nextSpeed===0 && (point.nextSpeed=0.01)
             that.navgtr.setSpeed(point.nextSpeed * that.times);
           }
 
@@ -385,7 +410,7 @@ export default {
               point.cssEndurance
             }</span>m,剩余电量<span>${point.soc}</span>%</p>`
           );
-          infoWindow.setPosition(that.navgtr.getPosition());
+          infoWindow.open(that.map, that.navgtr.getPosition());
           // 进度条实时展示tail
 
           !that.isOnSlider && (that.sliderVal = (totalIdx / len) * 100);
@@ -417,8 +442,9 @@ export default {
       });
     },
     // 标记列表数据
-    markerFun(iconOffsetArr) {
+    markerFun(iconOffsetArr,isClick) {
       let list = [];
+      let that = this
       iconOffsetArr.forEach(item => {
         let markerItem = new AMap.Marker({
           position: new AMap.LngLat(
@@ -429,6 +455,16 @@ export default {
           content: item.iconContent,
           offset: new AMap.Pixel(-13, -30)
         });
+        if(isClick){
+          markerItem.on('click', function(e) {
+            let infoWindow = new AMap.InfoWindow({
+              anchor: "bottom-center",
+              content: item.text+' : '+item.LngLat.time
+            });
+
+            infoWindow.open(that.map, [item.LngLat.longitude,item.LngLat.latitude]);
+          })
+        }
         list.push(markerItem);
       });
       return list;
@@ -517,9 +553,13 @@ export default {
     speedFun(point1, point2, time) {
       // point1,point2:经纬度数组，time:时间，s
       let distance = this.distanceFun(point1, point2);
-      let speed = distance / 1000 / (time /60/ 60);
-      // speed:km/h
-      return speed;
+      if(distance===0){
+        return 0
+      }else{
+        let speed = distance / 1000 / (time /60/ 60);
+        // speed:km/h
+        return speed;
+      }
     },
     sliderChange(val){
       let newVal = typeof(newVal)==='number' ? val : this.sliderVal
@@ -538,12 +578,16 @@ export default {
     },
     id(){
       if(this.activeIndex === '1'){
+        this.isActual = false
+        this.isPlan = false
         this.getPlanData()
         this.getActualData()
       }
     },
     activeIndex(newVal){
       if(newVal === '1'){
+        this.isActual = false
+        this.isPlan = false
         this.getPlanData()
         this.getActualData()
       }
@@ -654,6 +698,7 @@ export default {
   display: inline-block;
   margin-left: 15px;
   font-size: 14px;
+  width:70px;
 }
 .map-times {
   display: inline-block;

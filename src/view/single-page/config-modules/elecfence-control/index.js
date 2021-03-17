@@ -1,3 +1,18 @@
+export const railTypeMap = [
+  {
+    value: 1,
+    label: "运营围栏"
+  },
+  {
+    value: 2,
+    label: "流水奖励围栏"
+  },
+  {
+    value: 3,
+    label: "营销活动围栏"
+  }
+]
+
 export const returnFields = (that) => {
   return {
     current: 1,
@@ -72,12 +87,11 @@ export const returnFields = (that) => {
         tooltip: true,
         minWidth: 150,
         render: (h, params) => {
-          const railTypeMap = {
-            // 0: '全部',
-            1: '运营围栏',
-            2: '流水奖励围栏'
-          }
-          return h('div', railTypeMap[params.row.railType] || '暂无')
+          let text = '暂无'
+          railTypeMap.forEach(item => {
+            if(item.value === params.row.railType) text = item.label
+          })
+          return h('div', text)
         }
       },
       {

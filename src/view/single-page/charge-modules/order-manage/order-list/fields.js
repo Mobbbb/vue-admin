@@ -65,7 +65,7 @@ export const returnFields = (that) => {
       minWidth: 100
     },
     price: {
-      title: 'T3单价(元/度)',
+      title: '单价(元/度)',
       key: 'price',
       ellipsis: true,
       tooltip: true,

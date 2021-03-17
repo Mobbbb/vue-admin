@@ -7,7 +7,7 @@
             <TabPane label="订单轨迹" name="1">
                 <OrderMap :id="id" :activeIndex="activeIndex" v-show="activeIndex === '1'"></OrderMap>
             </TabPane>
-            <TabPane label="目的地/途径点修改记录" name="2">
+            <TabPane label="目的地/途经点修改记录" name="2">
                 <WaypointRecord :activeIndex="activeIndex" v-show="activeIndex === '2'"></WaypointRecord>
             </TabPane>
         </Tabs>

@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import {getViolationRecord} from '@/api/vehicle.js'
+import { getViolationRecord } from '@/api/vehicle.js'
 
 export default {
     name:'record-list',

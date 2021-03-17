@@ -5,12 +5,14 @@ import OperatorData from './module/operator-data'
 import InfoCenter from './module/info-center'
 import ConfigCenter from './module/config-center'
 import PowerCenter from './module/power-center'
+import MarketCenter from './module/market-center'
 import OrderCenter from './module/order-center'
 import FinanceCenter from './module/finance-center'
 import CustomerCenter from './module/customer-center'
 import SinglePage from './module/single-page'
 import ErrorCenter from './module/error-center'
 import ChargeCenter from './module/charge-center'
+import CompanyCenter from './module/company-center'
 
 /**
  * children中的子路由path不要带/
@@ -52,6 +54,7 @@ export default [
   },
   OperatorData,   // 运营数据
   OperatorCenter, // 营运管理中心
+  MarketCenter,   // 营销控制中心
   PowerCenter,    // 权限管理
   ConfigCenter,   // 配置管理
   FinanceCenter,  // 财务结算管理
@@ -59,6 +62,7 @@ export default [
   CustomerCenter, // 乘客管理
   InfoCenter,     // 消息中心
   ChargeCenter,   // 充电管理中心
+  CompanyCenter,  // 企业用车中心
   ...SinglePage,  // 登录、修改密码
   ...ErrorCenter  // 401, 404, 500, 错误日志
 ]

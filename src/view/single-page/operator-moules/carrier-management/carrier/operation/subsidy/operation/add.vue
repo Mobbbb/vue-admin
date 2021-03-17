@@ -24,7 +24,7 @@
                         <div class="append-input-wrap _append-input-wrap">
                             <InputNumber
                                 :min="0"
-                                :max="100"
+                                :max="999999"
                                 class="my-number-input percent-input"
                                 v-model="item.subsidy"
                                 :formatter="value => `${value}`"

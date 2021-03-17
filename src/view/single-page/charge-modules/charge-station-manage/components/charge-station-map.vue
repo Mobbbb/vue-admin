@@ -300,6 +300,7 @@ export default {
       });
       this.currentDataMarkers = currentData;
       this.cluster.addMarkers(currentData);
+      that.cluster.setMaxZoom(16)
     },
     showInfoWindow(cont) {
       let that = this;

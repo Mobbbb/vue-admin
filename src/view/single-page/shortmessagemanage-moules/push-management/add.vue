@@ -27,65 +27,50 @@
             <Row>
                 <Col span="8">
                 <FormItem label='发送对象' prop='pushRole'>
-                    <Select v-model="pushForm.pushRole"  style="width:200px" @on-change ="handelChangeItem">
+                    <Select v-model="pushForm.pushRole" style="width:200px" @on-change ="handelChangeItem">
                         <Option v-for="(item,index) in roleTypes" :value="item.value" :key="index">{{ item.label }}</Option>
                     </Select>
                 </FormItem>
                 </Col>
             </Row>
-             <Row>
+            <Row>
                 <Col span="8">
                 <FormItem label='发送范围' v-if="pushForm.pushRole==2" prop='target'>
                     <RadioGroup v-model="pushForm.target" @on-change="handelChangeItem">
-                        <Radio label = 1 >指定乘客</Radio>
-                        <Radio label = 2> 指定条件</Radio>
-                        <Radio label = 3>批量</Radio>
+                        <Radio label="1">指定乘客</Radio>
+                        <Radio label="4">用户分群</Radio>
+                        <Radio label="3">批量</Radio>
                     </RadioGroup>
                 </FormItem>
                 <FormItem label='发送范围' v-if="pushForm.pushRole==1" prop='target'>
                     <RadioGroup v-model="pushForm.target" @on-change="handelChangeItem">
-                        <Radio label = 1 >指定司机</Radio>
-                        <Radio label = 2> 指定条件</Radio>
-                        <Radio label = 3 >批量</Radio>
+                        <Radio label="1">指定司机</Radio>
+                        <Radio label="2">指定条件</Radio>
+                        <Radio label="3">批量</Radio>
                     </RadioGroup>
                 </FormItem>
                 </Col>
-             </Row>
-            
-             <Row>
+            </Row>
+            <Row>
                 <Col span="8">
-                    <FormItem  v-if="pushForm.pushRole== 1 && pushForm.target == 1  " prop='pushRangeDetail'>
+                    <FormItem v-if="pushForm.pushRole== 1 && pushForm.target == 1" prop='pushRangeDetail'>
                         <Input v-model="mobileStr" type="textarea" placeholder="请输入司机手机号，以英文逗号隔开"  @change.native="changeCommaToArr()"/>
                     </FormItem>
-                    <FormItem  v-if="pushForm.pushRole== 2 && pushForm.target == 1  " prop='pushRangeDetail'>
+                    <FormItem v-if="pushForm.pushRole== 2 && pushForm.target == 1" prop='pushRangeDetail'>
                         <Input v-model="mobileStr" type="textarea" placeholder="请输入乘客手机号，以英文逗号隔开" @change.native="changeCommaToArr()"/>
                     </FormItem>
 
-                    <FormItem label='' v-if="pushForm.pushRole == 1 && pushForm.target == 2  " >
+                    <FormItem v-if="pushForm.pushRole == 1 && pushForm.target == 2">
                         <input type="hidden" v-model="pushForm.operatorName">
                         <TreeInput  
-                        :TreeData= 'opGroup' 
-                        :parentData.sync = "targetGroup"
-                        :parentKeyData.sync = 'targetGroup2' 
-                        :position= "position1" 
-                        :selectAll='true'  > </TreeInput>
-                        <!-- <Cascader :data="opGroup" v-model="targetOpGroup" @on-change="test"></Cascader> -->
-                    </FormItem>
-                    <FormItem label='' v-if="pushForm.pushRole== 2 && pushForm.target == 2 " >
-                        <input type="hidden" v-model="pushForm.cityName">
-                        <TreeInput  
-                            :TreeData= 'userGroup' 
-                            :parentData.sync = "targetGroup" 
-                            :position= "position1" 
-                            :selectAll ='true' 
-                            IndexId='cityID'
-                            title="city"
-                            allTitle="全部已开通城市"
-                            :parentKeyData.sync = 'targetGroup2'
-                            ref="treeInput">
+                            position="right-start"
+                            :TreeData='opGroup' 
+                            :parentData.sync="targetGroup"
+                            :parentKeyData.sync='targetGroup2'
+                            :selectAll='true'>
                         </TreeInput>
                     </FormItem>
-                    <FormItem v-if=" pushForm.target == 3 " >
+                    <FormItem v-if=" pushForm.target == 3 ">
                         <ImportFile
                             :toDownTemplateUrl='downloadUrl'  
                             :importFileUrl='importUrl'
@@ -94,8 +79,27 @@
                         <span v-show="pushForm.uploadFileUrl">已上传</span>
                     </FormItem>
                 </Col>
-             </Row>
-              <Row>
+            </Row>
+            <Row v-if="pushForm.pushRole == 2 && pushForm.target == 4">
+                <Col span="8">
+                    <FormItem label='用户分群' prop="userGroupUuid">
+                        <Select
+                            remote
+                            filterable
+                            v-model="pushForm.userGroupUuid"
+                            placeholder="请选择用户分群"
+                            :remote-method="remoteMethod"
+                            :loading="loading"
+                            style="width: 200px">
+                            <Option 
+                                v-for="(option, index) in userGroupList" 
+                                :value="option.uuid" 
+                                :key="index">{{option.userGroupName}}</Option>
+                        </Select>
+                    </FormItem>
+                </Col>
+            </Row>      
+            <Row>
                 <Col span="8">
                     <FormItem label='业务类型' style="display:inline-block;" v-if="pushForm.pushRole==1 && pushForm.target ==2 ">
                         <Select v-model="pushForm.businessType" multiple clearable filterable style="width:200px">
@@ -104,16 +108,6 @@
                     </FormItem>
                 </Col>
              </Row>
-            <Row>
-                <Col span="8">
-                <FormItem label='性别' v-if="pushForm.target == 2" prop='sex'> 
-                    <Select v-model="pushForm.sex" style="width:200px">
-                        <Option v-for="(item,index) in sexList" :value="item.value" :key="index">{{ item.label }}</Option>
-                    </Select>
-                </FormItem>
-                </Col>
-                <!-- <Col span="8"> <span>dfd{{rangeIds}}</span></Col> -->
-            </Row>
             <Row>
                 <Col span="8">
                 <FormItem label='跳转链接（非必填）'>
@@ -143,13 +137,16 @@
 // import {treeDataTranslate} from '@/libs/tools.js'
 import TreeInput from '_a/treeInput/treeInput.vue'
 import ImportFile from '_a/import-file/index.vue'
-import { addPush } from '@/api/announcement.js'
-import { getCityOperatorTree, getCitys } from '@/api/common.js'
-import {changeKeyMethod} from '@/libs/tools.js'
+import { addPush, getUserGroupList } from '@/api/announcement.js'
+import { getCityOperatorTree } from '@/api/common.js'
+import { changeKeyMethod } from '@/libs/tools.js'
 
 export default {
     name:'add-push',
-    components: {TreeInput,ImportFile},
+    components: {
+        TreeInput,
+        ImportFile
+    },
     data() {
         const validateNN = (rule, value, callback) => {
             if(value !== '') callback()
@@ -161,16 +158,14 @@ export default {
             else callback()
         }
         return {
-            arr: [],
+            loading: false,
+            userGroupList: [],
             targetGroup:[],
             targetGroup2:[],
-            targetOpGroup: [],
             mobileStr:'',
-            downloadUrl: '/admin/system/push/getExcel',
+            downloadUrl: '/download/pushTemplate.xlsx',
             importUrl: '/admin/system/push/importExcel',
-            pushForm: {
-                // targetGroup: ''
-            },
+            pushForm: {},
             roleTypes: [
                 {
                     label: '司机',
@@ -181,71 +176,58 @@ export default {
                     value: 2
                 }
             ],
-            sexList: [{
-                    label: '全部',
-                    value: '1'
-                },
-                {
-                    label: '男',
-                    value: '2'
-                },{
-                    label: '女',
-                    value: '3'
-                }],
             businessTypes: [
                 {
-                text: '出租车',
-                value: 1
+                    text: '出租车',
+                    value: 1
                 },
                 {
-                text: '专车',
-                value: 2
+                    text: '专车',
+                    value: 2
                 },
                 {   
-                text: '跨域',
-                value: 3
+                    text: '跨域',
+                    value: 3
                 },
                 {
-                text: '快车',
-                value: 4
+                    text: '快车',
+                    value: 4
                 }
             ],
             ruleValidate: {
                 title: [
-                        { required: true, message: '请填写', trigger: 'blur' }
-                    ],
-                pushRole: [
-                        { required: true, validator: validateNExist, trigger: 'blur' }
-                    ],
-                pushTime:[
-                        { required: true, validator: validateNExist, trigger: 'blur' }
-                    ],
-                target: [
-                        { required: true, validator: validateNExist, trigger: 'blur' }
-                    ],
-                operatorName:[
-                        { required: true, message: '请填写', trigger: 'blur' }
-                    ],
-                cityName:[
-                        { required: true,  validator: validateNN, trigger: 'change' }
-                    ],
-                businessType:[
-                     {required: true, validator: validateNExist, trigger: 'blur'}
+                    { required: true, message: '请填写', trigger: 'blur' }
                 ],
-                sex:[
-                     {required: true, validator: validateNExist, trigger: 'blur'}
+                pushRole: [
+                    { required: true, validator: validateNExist, trigger: 'blur' }
+                ],
+                pushTime:[
+                    { required: true, validator: validateNExist, trigger: 'blur' }
+                ],
+                target: [
+                    { required: true, validator: validateNExist, trigger: 'blur' }
+                ],
+                operatorName:[
+                    { required: true, message: '请填写', trigger: 'blur' }
+                ],
+                userGroupUuid:[
+                    { required: true, message: '请填写', trigger: 'change' }
+                ],
+                cityName:[
+                    { required: true,  validator: validateNN, trigger: 'change' }
+                ],
+                businessType:[
+                    {required: true, validator: validateNExist, trigger: 'blur'}
+                ],
+                userGroups:[
+                    {required: true, validator: validateNExist, trigger: 'blur'}
                 ]
             },
             timeOptions:{
                 disabledDate (date) {
-                    return date && date.valueOf() < Date.now()-86400001
+                    return date && date.valueOf() < Date.now() - 86400001
                 }
             },
-            position1: 'right-start',
-            dropVisible: false,
-            userList: [],
-            selectItems: [],
-            userGroup:  [],
             opGroup: []
         }
     },
@@ -272,22 +254,34 @@ export default {
         },
     },
     created() {
-        this.getCitys()
         this.getOperatorsList()
         this.pushForm = {}
     },
     beforeRouteEnter  (to, from, next) {
-        next(vm =>{
+        next(vm => {
             vm.pushForm = {}
             vm.$refs.pushForm.resetFields()
             vm.$forceUpdate()
         })
     },
     methods: { 
-        getCitys() { // 获取已开通城市list
-            getCitys().then(res => {
-                this.userGroup = res.data.data
-            })
+        remoteMethod (query) {
+            if (query !== '') {
+                let params = {
+                    currPage: 1,
+                    pageSize: 10,
+                    userGroupStatus: 0,
+                    userGroupName: query
+                }
+                this.loading = true
+                getUserGroupList(params).then(res => {
+                    let data = res.data.data
+                    this.userGroupList = data && data.list || []
+                    this.loading = false
+                })
+            } else {
+                this.userGroupList = []
+            }
         },
         //获取运营商列表
         getOperatorsList () {
@@ -304,7 +298,7 @@ export default {
         },
         handelChangeItem(){
             this.targetGroup = []
-            this.targetGroup2 =[]
+            this.targetGroup2 = []
         },
         backOneStep(){
             this.$router.go(-1)
@@ -320,11 +314,11 @@ export default {
         },
         handleSave(name){
             //指定条件时赋值
-            if(this.pushForm.target==2 && this.pushForm.pushRole ==1){
+            if (this.pushForm.target == 2 && this.pushForm.pushRole == 1) {
                 this.pushForm.operatorUuid = this.rangeIds
                 this.pushForm.operatorName = this.rangeKeys
             }
-            if(this.pushForm.target ==  2 && this.pushForm.pushRole ==2) {
+            if (this.pushForm.target == 2 && this.pushForm.pushRole == 2) {
                 this.pushForm.cityId = this.rangeIds
                 this.pushForm.cityName = this.rangeKeys
             }
@@ -333,7 +327,7 @@ export default {
                     let data = JSON.parse(JSON.stringify(this.pushForm))
                     data.pushTime = Date.parse(data.pushTime)
                     data.target = Number(data.target)
-                    addPush(data).then(res =>{
+                    addPush(data).then(res => {
                         this.$Message.success('保存成功!')
                         this.$router.push({name:'push-center'})
                     })

@@ -1,6 +1,5 @@
 import { 
-  sexMap, 
-  accountStatusMap, 
+  sexMap,
   typeTimeMap, 
   orderMainStatusMap, 
   payTypeMap,
@@ -13,6 +12,12 @@ import {
   typeModuleMap
 } from '@/libs/status-map'
 import router from '@/router'
+
+export const accountStatusMap = {
+  0: '正常',
+  1: '长期封号',
+  2: '短期封号'
+}
 
 /* 用户列表 */
 export const fields = {
@@ -216,9 +221,20 @@ export const rechargeHistory = [
     title: '活动名称',
     tooltip: true,
     minWidth: 110,
-    key: 'xxxxx',
+    key: 'activityName',
     render: (h, params) =>{
-      return h('span', '暂无')
+      return h('a', {
+        on: {
+          click: () => {
+            router.push({
+              name: 'activity-detail',
+              params: {
+                id: params.row.activityId
+              }
+            })
+          }
+        }
+      }, params.row.activityName)
     }
   },
   {
@@ -382,8 +398,19 @@ export const coupons = [
     key: 'xxxx',
     width: 150,
     tooltip: true,
-    render: (h, params) => {
-      return h('span', '暂无')
+    render: (h, params) =>{
+      return h('a', {
+        on: {
+          click: () => {
+            router.push({
+              name: 'activity-detail',
+              params: {
+                id: params.row.activityId
+              }
+            })
+          }
+        }
+      }, params.row.activityName)
     }
   },
   {
@@ -421,6 +448,7 @@ export const coupons = [
     key: 'grantState',
     tooltip: true,
     width: 100,
+    fixed: 'right',
     render: (h, params) => {
       return h('span', couponStatusMap[params.row.grantState])
     }

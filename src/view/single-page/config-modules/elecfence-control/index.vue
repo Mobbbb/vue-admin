@@ -45,7 +45,7 @@
 </template>
 
 <script>
-  import { returnFields, inputList } from "./index";
+  import { returnFields, inputList, railTypeMap } from "./index";
   import { getCarrierList } from "@/api/operator-carrier";
   import VTable from "_a/v-table/v-table";
   import Float from "./float";
@@ -121,16 +121,7 @@
             label: '出租车'
           }
         ],
-        railTypeList: [
-          {
-            value: 1,
-            label: '运营围栏'
-          },
-          {
-            value: 2,
-            label: '流水奖励围栏'
-          },
-        ],
+        railTypeMap,
         invalidEditor: false,
         polygonPath: []
       };
@@ -141,7 +132,7 @@
       this.cityList = JSON.parse(localStorage.getItem('provinceCityList'))
       this.inputList[1].cascaderList = JSON.parse(localStorage.getItem('provinceCityList'))
       this.inputList[2].dropList = this.optList
-      this.inputList[3].dropList = this.railTypeList
+      this.inputList[3].dropList = this.railTypeMap
       this.inputList[5].dropList = this.status
     },
     methods: {
@@ -179,14 +170,16 @@
         this.updateType = "add";
       },
       confirm(data) {
-        if (data) this.getTableList({});
-        this.isPop = false;
+        if (data) this.getTableList({})
+        this.isPop = false
       },
       search(data) {
-        this.getTableList(data);
+        this.current = 1
+        this.getTableList(data)
       },
       reset(data) {
-        this.getTableList(data);
+        this.current = 1
+        this.getTableList(data)
       },
       sort() {},
       selectObj(val) {

@@ -1,197 +1,111 @@
 /* 运营管理-考勤管理 */
 export const returnDayilyFields = (that) => { // 日考勤规则
-    return {
-        city: {
+    return [
+        {
             title: '运营区域',
             key: 'cityName',
             tooltip: true,
             width: 300
         },
-        dayOnline: {
+        {
             title: '日在线时长',
             key: 'onlineDuration',
             tooltip: true,
             minWidth: 180
         },
-        hightOnline: {
+        {
             title: '日高峰时长',
             key: 'heightDuration',
             tooltip: true,
             minWidth: 100
         },
-        updateTime: {
+        {
             title: '更新时间',
             key: 'updateTime',
             tooltip: true,
             minWidth: 120
         },
-        action: {
+        {
+            title: '版本号',
+            key: 'version',
+            tooltip: true,
+            minWidth: 120
+        },
+        {
             title: '操作',
             key: 'action',
             fixed: 'right',
             width: 180,
-            render: (h, params) => {
-                return h('div', [
-                    h('Button', {
-                        props: {
-                            type: "warning",
-                            ghost: true,
-                            size: "small"
-                        },
-                        directives: [{
-                            name: 'hasAuth',
-                            value: 'assessment-rule-day-edit'
-                        }],
-                        'class': {
-                            tableBtn: true
-                        },
-                        on: {
-                            click: () => {
-                                that.uuid = params.row.uuid
-                                that.auditHandle(params.row.uuid);
-                            }
-                        }
-                    }, '编辑'),
-                    h('Button', {
-                        props: {
-                            type: "info",
-                            ghost: true,
-                            size: "small"
-                        },
-                        directives: [{
-                            name: 'hasAuth',
-                            value: 'assessment-rule-day-detail'
-                        }],
-                        on: {
-                            click: () => {
-                                that.detailHandle(params.row.uuid)
-                            }
-                        }
-                    }, '详情')
-                ])
-            }
+            slot: 'action'
         }
-    }
+    ]
 }
-export const returnMonthFields = (that) => { // 月考勤规则
-    return {
-        cityName: {
+
+// 月考勤规则
+export const returnMonthFields = (that) => {
+    return [
+        {
             title: '运营区域',
             key: 'cityName',
             tooltip: true,
             width: 200
         },
-        examineYear: {
+        {
             title: '适用年',
             key: 'examineYear',
             tooltip: true,
             minWidth: 180
         },
-        month: {
+        {
             title: '适用月',
             key: 'month',
             tooltip: true,
             minWidth: 100
         },
-        day: {
-            title: '有效出勤天数',
+        {
+            title: '休息天数',
             key: 'day',
             tooltip: true,
-            minWidth: 120,
-            render: (h, params) => {
-                let newDay = params.row.day
-                return h('div', [
-                    h('span', {
-                        style:{
-                            display: params.row.edit === false ? 'inline-block' : 'none'
-                        }
-                    }, params.row.day),
-                    h('InputNumber',{
-                        style:{
-                            display: params.row.edit === true ? 'inline-block' : 'none',
-                            textAlign:'center',
-                            width:'100%'
-                        },
-                        attrs:{
-                            value: newDay,
-                            min:0,
-                            max:31
-                        },
-                        on:{
-                            'on-change': (event) => {
-                                params.row.day = event
-                            }
-                        }
-                    })
-                ])
-            }
+            minWidth: 100
         },
-        updateTime: {
+        {
+            title: '有效出勤天数',
+            key: 'attendanceDays',
+            tooltip: true,
+            minWidth: 120,
+        },
+        {
+            title: '日均在线时长',
+            key: 'onlineDuration',
+            tooltip: true,
+            minWidth: 100
+        },
+        {
+            title: '日均高峰在线时长',
+            key: 'heightDuration',
+            tooltip: true,
+            minWidth: 120
+        },
+        {
             title: '更新时间',
             key: 'updateTime',
             tooltip: true,
             minWidth: 160
         },
-        action: {
+        {
+            title: '版本号',
+            key: 'version',
+            tooltip: true,
+            minWidth: 160 
+        },
+        {
             title: '操作',
             key: 'action',
+            slot: 'action',
             fixed: 'right',
-            width: 100,
-            render: (h, params) => {
-                return h('div', [
-                    h('Button', {
-                        props: {
-                            type: "warning",
-                            ghost: true,
-                            size: "small"
-                        },
-                        directives: [{
-                            name: 'hasAuth',
-                            value: 'assessment-rule-month-edit'
-                        }],
-                        'class': {
-                            tableBtn: true
-                        },
-                        style: {
-                            display: params.row.edit === false ? 'inline-block' : 'none'
-                        },
-                        on: {
-                            click: () => {
-                                // let editId = params.row.uuid;
-                                // that.auditHandle(editId);
-                                params.row.edit = true
-                            }
-                        }
-                    }, '编辑'),
-                    h('Button', {
-                        props: {
-                            type: "primary",
-                            ghost: true,
-                            size: "small"
-                        },
-                        'class': {
-                            tableBtn: true
-                        },
-                        style: {
-                            display: params.row.edit === true ? 'inline-block' : 'none'
-                        },
-                        on: {
-                            click: () => {
-                                let paramsData = {
-                                    examineType: 'M',
-                                    day: params.row.day,
-                                    uuid: params.row.uuid,
-                                    month: params.row.month
-                                }
-                                that.auditMonthRule(paramsData)
-                                params.row.edit = false
-                            }
-                        }
-                    }, '保存')
-                ])
-            }
+            width: 180
         }
-    }
+    ]
 }
 
 export const allMonths = [
@@ -263,6 +177,79 @@ export const allMonths = [
     }
 ]
 
+// 日考勤历史版本
+export const dRevisionColumns = (that) => {
+    return [
+        {
+            title: '日在线时长',
+            key: 'onlineDuration',
+            tooltip: true,
+            minWidth: 160 
+        },
+        {
+            title: '日高峰在线时长',
+            key: 'heightDuration',
+            tooltip: true,
+            minWidth: 160 
+        },
+        {
+            title: '创建时间',
+            key: 'createTime',
+            tooltip: true,
+            minWidth: 160 
+        },
+        {
+            title: '版本号',
+            key: 'version',
+            tooltip: true,
+            minWidth: 160 
+        },
+    ]
+}
+
+// 月考勤历史版本
+export const mRevisionColumns = (that) => {
+    return [
+        {
+            title: '休息天数',
+            key: 'day',
+            tooltip: true,
+            minWidth: 160 
+        },
+        {
+            title: '有效出勤天数',
+            key: 'attendanceDays',
+            tooltip: true,
+            minWidth: 160 
+        },
+        {
+            title: '日均在线时长',
+            key: 'onlineDuration',
+            tooltip: true,
+            minWidth: 160 
+        },
+        {
+            title: '日均高峰在线时长',
+            key: 'heightDuration',
+            tooltip: true,
+            minWidth: 160 
+        },
+        {
+            title: '创建时间',
+            key: 'createTime',
+            tooltip: true,
+            minWidth: 160 
+        },
+        {
+            title: '版本号',
+            key: 'version',
+            tooltip: true,
+            minWidth: 120,
+            fixed: 'right'
+        },
+    ]
+}
+
 export const dInputList = [
     {
         name: 'cascader-input', // 文本输入框名
@@ -303,5 +290,68 @@ export const mInputList = [
         inputWidth: 200, // input框的宽度
         key: '6',
         isHide: false
+    }
+]
+
+export const restDayList = [
+    {
+        value: 1,
+        label: 1
+    },
+    {
+        value: 2,
+        label: 2
+    },
+    {
+        value: 3,
+        label: 3
+    },
+    {
+        value: 4,
+        label: 4
+    },
+    {
+        value: 5,
+        label: 5
+    },
+    {
+        value: 6,
+        label: 6
+    },
+    {
+        value: 7,
+        label: 7
+    },
+    {
+        value: 8,
+        label: 8
+    },
+    {
+        value: 9,
+        label: 9
+    },
+    {
+        value: 10,
+        label: 10
+    },
+    {
+        value: 11,
+        label: 11
+    },
+    {
+        value: 12,
+        label: 12
+    },
+    {
+        value: 13,
+        label: 13
+    },
+    {
+        value: 14,
+        label: 14
+    },
+    {
+        value: 15,
+        label: 15
     }
 ]

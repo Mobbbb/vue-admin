@@ -9,6 +9,7 @@
       :isLoading="isLoading"
       :parColumns="parColumns"
       :parTableData="tableData"
+      :nodatatext="nodatatext"
       @changePage="changePage"
       @changePageSize="changePageSize"
       style="margin-top: 25px;">
@@ -145,6 +146,7 @@
 import {getInvoiceList, getInvoiceDetail, inputPostInfo} from '@/api/finance.js'
 import {inputList,Columns,columnOrder} from "./index";
 import { downloadIamge } from '@/libs/tools'
+import { getToken } from '@/libs/util'
 import { config } from '@/config/index'
 import fileDownload from 'js-file-download'
 import axios from 'axios'
@@ -173,14 +175,15 @@ export default {
         invoiceImg:'',
         oderData:[],
         columnOrder:[],
-        isAllDataRender: false
+        isAllDataRender: false,
+        nodatatext: '请根据搜索条件筛选数据'
       }
     },
     mounted () {
       this.inputList = inputList
       this.columnOrder = columnOrder(this)
       Object.entries(Columns(this)).forEach(([key,value])=> {this.parColumns.push(value)})
-      this.getTableList()
+      this.$store.commit('changeLoadingFlag', false)
     },
     methods: {
       downloadIamge(){
@@ -188,6 +191,7 @@ export default {
           method: 'post',
           url: this._baseUrl + '/common/downloadFile',
           responseType: 'blob',
+          headers: { 'Authorization': getToken() },
           data: { url: this.invoiceImg }
         }).then(function (res) {
           if(res.data) fileDownload(res.data, 'invoice.png')
@@ -225,11 +229,11 @@ export default {
         this.pageSize = val;
       },
       poster_ok: function () {
-        if(this.postForm.logisticsOrderNo === ''){
+        if(this.postForm.logisticsOrderNo==''){
           this.$Message.error('输入不能为空')
-        } else {
+        }else {
           let data = this.postForm;
-          inputPostInfo(data).then(res => {
+          inputPostInfo(data).then(res=>{
             this.$Message.success('录入成功')
             this.editMobel = false
             this.getTableList()

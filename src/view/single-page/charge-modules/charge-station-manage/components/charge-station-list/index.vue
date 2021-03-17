@@ -22,7 +22,6 @@
         </Col>
       </Row>
 
-      <Button type="primary" @click="synStationData" v-hasAuth="'charge-station-synchro'">同步数据</Button>
       <VTable
         :total="total"
         :current="current"
@@ -42,7 +41,7 @@
 import VTable from "_a/v-table/v-table";
 import { returnFields } from "./fields";
 import areaCascader from "../area-cascader.vue";
-import { axiosStationList, axiosSynStationData } from "@/api/charge.js";
+import { axiosStationList } from "@/api/charge.js";
 import { cpTranslate } from "@/libs/tools";
 export default {
   name: "chargeStationList",
@@ -85,17 +84,6 @@ export default {
       this.isNothing = false;
       this.areaVal = JSON.parse(JSON.stringify(areaList));
       this.clearQueryData();
-    },
-    // 从供应商拉取最新数据
-    synStationData() {
-      axiosSynStationData({ supplierId: this.id }).then(res => {
-        let status = res.data.data.status;
-        if (status == "1") {
-          this.$Message.success("已请求同步，请稍后刷新查看");
-        } else {
-          this.$Message.error("同步数据失败");
-        }
-      });
     },
     // 点击搜索回调
     queryData() {

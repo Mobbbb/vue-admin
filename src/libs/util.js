@@ -391,6 +391,11 @@ export const routeHasExist = (tagNavList, routeItem) => {
   return res
 }
 
+export const formatAmount = (num) =>{
+  if(Number.isNaN(+num)) return null;
+  return (+num).toFixed(2).replace(/\B(?=(\d{3})+\b)/g, ",");
+};
+
 export const localSave = (key, value) => {
   localStorage.setItem(key, value)
 }

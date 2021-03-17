@@ -62,29 +62,6 @@ import { fields, pageData, inputList } from './fields';
 import {queryList, deblock, block} from '@/api/passenger.js';
 
 export default {
-  mounted() {
-    this.getTableColumns();
-    
-    let isReload = this.$store.state.cache['customer-basic']
-    if(isReload){
-      Object.keys(this.searchData).forEach(key=>{
-        this.searchData[key] = ''
-      })
-      this.pageData = {
-        total: 0,
-        current: 1,
-        pageSize: 10
-      }
-      this.inputList.forEach(item=>{
-        item.value = ''
-      })
-      this.getList();
-      this.$store.commit('switchCacheState',['customer-basic',false])
-    }else{
-      this.$store.commit('changeLoadingFlag', false)
-      this.tableData.length===0 && this.getList();
-    }
-  },
   data() {
     return {
       options: {
@@ -98,18 +75,29 @@ export default {
       ...pageData,
     }
   },
+  mounted() {
+    this.getTableColumns();
+    let isReload = this.$store.state.cache['customer-basic']
+    if(isReload){
+      Object.keys(this.searchData).forEach(key=>{
+        this.searchData[key] = ''
+        delete this.searchData[key]
+      })
+      this.getList()
+      this.$store.commit('switchCacheState',['customer-basic',false])
+    }else{
+      this.$store.commit('changeLoadingFlag', false)
+      this.tableData.length===0 && this.getList()
+    }
+  },
   methods: {
     search: function(data){
-      Object.keys(data).forEach(key=>{
-        this.searchData[key] = data[key]
-      })
+      this.searchData = data
       this.pageData.current = 1
       this.getList()
     },
     reset: function(data){
-      Object.keys(this.searchData).forEach(key=>{
-        this.searchData[key] = ''
-      })
+      this.searchData = {}
       this.pageData.current = 1
       this.getList()
     },
@@ -121,6 +109,7 @@ export default {
       if(this.searchData) {
         Object.assign(params, this.searchData)
       }
+      this.$store.commit('changeLoadingFlag', true)
       queryList(params).then(res => {
         let data = res.data.data.pageResult
         this.pageData.total = data.totalCount

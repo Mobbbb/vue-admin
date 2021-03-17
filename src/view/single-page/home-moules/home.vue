@@ -1,6 +1,5 @@
 <template>
   <div>
-    <div class="versionfont">{{ENVMSG}}</div>
     <Row :gutter="20">
       <i-col :xs="12" :md="8" :lg="4" v-for="(infor, i) in inforCardData" :key="i" :bind_key="`infor-${i}`" style="height: 120px;padding-bottom: 10px;">
         <infor-card shadow :color="infor.color" :icon="infor.icon" :icon-size="36">
@@ -34,7 +33,7 @@ import InforCard from '_c/info-card'
 import CountTo from '_c/count-to'
 import { ChartPie, ChartBar } from '_c/charts'
 import Example from './example.vue'
-import config from '@/config'
+
 export default {
   name: 'home',
   components: {
@@ -71,31 +70,8 @@ export default {
         Sat: 1322,
         Sun: 1324
       },
-      ENVMSG: ''
     }
   },
-  mounted () {
-    this.getEnvMsg()
-  },
-  methods: {
-    getEnvMsg () {
-      const devUrl = 'http://47.111.62.215'
-      const testUrl = 'http://47.111.32.94'
-      const uatUrl = 'http://47.111.32.53'
-      let proUrl = config.baseUrl.pro
-      const getUrlIp = url => {
-        let contrast = url.split('//')[1].split(':')[0]
-        return contrast
-      }
-      if (getUrlIp(proUrl) == getUrlIp(testUrl)) {
-        this.ENVMSG = '测试版本：' + config.version.dev
-      } else if ( getUrlIp(proUrl) == getUrlIp(devUrl)) {
-        this.ENVMSG = '开发版本：' + config.version.pro
-      }else if ( getUrlIp(proUrl) == getUrlIp(uatUrl)) {
-        this.ENVMSG = '演示版本：' + config.version.pro
-      }
-    }
-  }
 }
 </script>
 

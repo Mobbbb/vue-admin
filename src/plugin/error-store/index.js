@@ -14,8 +14,8 @@ export default {
         console.log(info)
       })
     },
-    Vue.prototype.$utils={//全局方法
-      pkAccess:function(key) {//获取url中的参数
+    Vue.prototype.$utils={ // 全局方法
+      pkAccess:function(key) { // 获取url中的参数
           return store.state.user.access.includes(key)
       }
     }

@@ -6,15 +6,15 @@
       v-model="isShowUpModal"
       :title="'导入数据'"
       :mask-closable='false'
-      width="500"
+      width="600"
       @on-visible-change='statusChange'
     >
      <Alert  type="warning">{{importMessage}}</Alert>
      <div class="down-container">
-        <!--<Button  type="primary" style="display: inline-block;" :to='toDownTemplateUrl_' target="_blank">
+        <Button  type="primary" style="display: inline-block;" :to='toDownTemplateUrl_' target="_blank">
           <Icon type="ios-cloud-download-outline" size="20"/>
             下载模板
-        </Button>-->
+        </Button>
         <Upload
           multiple
           type="drag"

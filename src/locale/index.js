@@ -7,6 +7,8 @@ import customEnUs from './lang/en-US'
 import zhCnLocale from 'iview/src/locale/lang/zh-CN'
 import enUsLocale from 'iview/src/locale/lang/en-US'
 import zhTwLocale from 'iview/src/locale/lang/zh-TW'
+import elementEnLocale from 'element-ui/lib/locale/lang/en'
+import elementZhLocale from 'element-ui/lib/locale/lang/zh-CN'
 
 Vue.use(VueI18n)
 
@@ -20,9 +22,9 @@ Vue.config.lang = lang
 // vue-i18n 6.x+写法
 Vue.locale = () => {}
 const messages = {
-  'zh-CN': Object.assign(zhCnLocale, customZhCn),
+  'zh-CN': Object.assign(zhCnLocale, customZhCn,elementZhLocale),
   'zh-TW': Object.assign(zhTwLocale, customZhTw),
-  'en-US': Object.assign(enUsLocale, customEnUs)
+  'en-US': Object.assign(enUsLocale, customEnUs,elementEnLocale)
 }
 const i18n = new VueI18n({
   locale: lang,

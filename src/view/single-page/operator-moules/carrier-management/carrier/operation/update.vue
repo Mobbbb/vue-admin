@@ -4,14 +4,16 @@
             <FormItem label="运营商：" prop="name">
                 <Input clearable v-model="params.name" placeholder="请输入运营商名称"></Input> 
             </FormItem>
-            <FormItem label="所属机构：" prop="organItem">
+            <FormItem label="所属机构：" prop="organItem" v-show="type === 'add'">
                 <Cascader
-                    :disabled="type === 'add' ? false : true"
                     change-on-select
                     :data="organList"
                     v-model="params.organItem"
-                    placeholder="请选择所属机构"> 
+                    placeholder="请选择所属机构">
                 </Cascader>
+            </FormItem>
+            <FormItem label="所属机构：" v-show="type === 'edit'">
+                <Input readonly v-model="params.organName"></Input> 
             </FormItem>
             <FormItem label="运营区域：" prop="carrierArea">
                 <Cascader 
@@ -31,10 +33,6 @@
             <FormItem label="邮箱：" prop="email">
                 <Input clearable v-model="params.email" placeholder="请输入邮箱地址"></Input> 
             </FormItem>
-            <FormItem label="运营商账号：" prop="accountNumber">
-                <Input v-model="params.accountNumber" placeholder="请输入运营商账号" :disabled="editorstatus"></Input>
-            </FormItem>
-            
             <FormItem label="地址：" prop="address" style="width: 400px;">
                 <Input clearable v-model="params.address" placeholder="请输入地址"></Input>
             </FormItem>
@@ -137,9 +135,6 @@ export default {
                 email: [{
                     required: true, trigger: 'change', validator: email,
                 }],
-                accountNumber: [{
-                    required: true, trigger: 'change', message: '运营商账号不得为空'
-                }],
                 address: [{
                     required: true, trigger: 'change', message: '地址不得为空'
                 }],
@@ -152,8 +147,7 @@ export default {
                 organItem: [{
                     required: true, validator: organItem, trigger: 'change'
                 }],
-            },
-            editorstatus: false
+            }
         }
     },
     watch: {
@@ -172,9 +166,7 @@ export default {
                             {area: '', number: ''}
                         ]
                     }
-                    this.editorstatus = false
                 } else {
-                    this.editorstatus = true
                     this.getCarrierInfo()
                 }
             }

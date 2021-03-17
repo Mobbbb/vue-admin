@@ -3,9 +3,9 @@
     <div class="CM">
         <div class="CM-header">
             <SearchList :inputList="inputList" @on-search="search" @on-reset="reset"></SearchList>
-            <div style="display: flex;justify-content: space-between;">
+            <!--<div style="display: flex;justify-content: space-between;">
                 <div>
-                    <!--<Upload 
+                    <Upload 
                         :data="{agentUuid: carrierInfo.uuid}"
                         @on-success="importCallback"
                         toDownTemplateUrl="/admin/carManager/downloadFile"
@@ -13,14 +13,14 @@
                         btnText="导入" 
                         style="display: inline-block;margin-right: 20px;"> 
                     </Upload>
-                    <Button type="primary" @click="exportFile" style="width: 80px;">导 出</Button>-->
+                    <Button type="primary" @click="exportFile" style="width: 80px;">导 出</Button>
                 </div>
                 <TableConfig
                     @on-confirm="changeTableColumn"
                     v-model="selectFields"
                     :customList="totalFields">    
                 </TableConfig>
-            </div>
+            </div>-->
         </div>
         <div class="CM-content">
             <VTable 

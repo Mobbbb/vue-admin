@@ -78,7 +78,7 @@
             <li>电桩编号：{{station.pileCode}}</li>
             <li>类型：{{Number(station.chargingType)===1?'快充':'慢充'}}</li>
             <li>状态：{{station.status | statusTurnTxt}}</li>
-            <li>公率：{{station.power}} W</li>
+            <li>功率：{{station.power}} W</li>
           </ul>
         </li>
       </ul>
@@ -151,15 +151,15 @@ export default {
         let resData = res.data.data || {};
         this.detailInfo = resData.station;
         this.priceData = resData.electricityPriceList||[];
-        let t3PriceNum = 0
+        let ownPriceNum = 0
         let marketPriceNum = 0
         let PriceNum = 0
         this.priceData.forEach((item)=>{
           console.log(item.startTime && item.endTime)
           item.timeFrame = item.startTime!=='' && item.endTime!=='' ? item.startTime+'——'+item.endTime : ''
           if (item.priceType==1) {
-            item.priceTypeText = 'T3单价'
-            t3PriceNum++
+            item.priceTypeText = '企业单价'
+            ownPriceNum++
           }else if(item.priceType==2){
             item.priceTypeText = '市场价'
             marketPriceNum++
@@ -168,7 +168,7 @@ export default {
             PriceNum++
           }
         })
-        if (t3PriceNum > 1 || marketPriceNum > 1 || PriceNum > 1) {
+        if (ownPriceNum > 1 || marketPriceNum > 1 || PriceNum > 1) {
           this.columns1.push({
             title: "时段",
             key: "timeFrame",

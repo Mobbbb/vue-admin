@@ -80,7 +80,7 @@ export default {
             this.transferData =  [
                 { key: 1, label: "Content 1", mobile: 110, master: '张三丰'},
                 { key: 2, label: "Content 2", mobile: 110, master: '李莫愁'},
-                { key: 3, label: "Content 3", mobile: 17826833467, master: '任我行'},
+                { key: 3, label: "Content 3", mobile: 17868468416385, master: '任我行'},
                 { key: 4, label: "Content 4", mobile: 110, master: 'aaa'},
                 { key: 5, label: "Content 5", mobile: 110, master: 'aaa'},
                 { key: 6, label: "Content 6", mobile: 110, master: 'aaa'}
@@ -89,7 +89,7 @@ export default {
             this.targeList = [
                 { key: 1, label: "Content 1", mobile: 110, master: '张三丰'},
                 { key: 2, label: "Content 2", mobile: 110, master: '李莫愁'},
-                { key: 3, label: "Content 3", mobile: 17826833467, master: '任我行'}
+                { key: 3, label: "Content 3", mobile: 1786416543, master: '任我行'}
             ]
         },
         handleChange: function(newTargetKeys, direction, moveKeys){
@@ -126,7 +126,7 @@ export default {
                 this.transferData =  [
                     { key: 11, label: "11", mobile: 110, master: '张三丰'},
                     { key: 22, label: "12", mobile: 110, master: '李莫愁'},
-                    { key: 33, label: "13", mobile: 17826833467, master: '任我行'},
+                    { key: 33, label: "13", mobile: 131841351, master: '任我行'},
                     { key: 44, label: "14", mobile: 110, master: 'aaa'},
                     { key: 55, label: "15", mobile: 110, master: 'aaa'},
                     { key: 66, label: "16", mobile: 110, master: 'aaa'}
@@ -135,7 +135,7 @@ export default {
                 this.transferData =  [
                     { key: 1, label: "Content 1", mobile: 110, master: '张三丰'},
                     { key: 2, label: "Content 2", mobile: 110, master: '李莫愁'},
-                    { key: 3, label: "Content 3", mobile: 17826833467, master: '任我行'},
+                    { key: 3, label: "Content 3", mobile: 15646341685, master: '任我行'},
                     { key: 4, label: "Content 4", mobile: 110, master: 'aaa'},
                     { key: 5, label: "Content 5", mobile: 110, master: 'aaa'},
                     { key: 6, label: "Content 6", mobile: 110, master: 'aaa'}

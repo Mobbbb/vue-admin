@@ -88,3 +88,14 @@ export const getAgentList = (data) => {
     method: 'post'
   })
 }
+/**远程模糊搜索公用api
+ * @param url  
+ * @param data 传参
+ */
+export const vagueCommonHandle = (url,data)=>{
+  return axios.request({
+    url,
+    data,
+    method: 'post'
+  })
+}

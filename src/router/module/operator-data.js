@@ -20,6 +20,14 @@ export default {
       component: () => import('@/view/single-page/opdata-modules/operative-map/index.vue')
     },
     {
+      path: 'car-gps',
+      name: 'car-gps',
+      meta: {
+        title: '车辆GPS'
+      },
+      component: () => import('@/view/single-page/opdata-modules/car-gps/index.vue')
+    },
+    {
       path: 'operation-manage',
       name: 'operation-manage',
       meta: {

@@ -159,6 +159,7 @@ export default {
             mapModal: false,
             editMapModal:false,
             siteForm: {
+                name: '',
                 address: ''
             },
             orginPosition:[],
@@ -304,7 +305,10 @@ export default {
         addSite() {
             this.$refs.siteForm.resetFields()
             this.addModal = true;
-            this.siteForm = {}
+            this.siteForm = {
+                name: '',
+                address: ''
+            }
         },
         handleQuery(val) {
             this.current = 1

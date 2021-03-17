@@ -24,6 +24,9 @@
               <span class="name-info">联系电话</span>：
               <span class="val-info">{{tab.phone}}</span>
             </li>
+            <li>
+              <Button type="primary" @click="synStationData" v-hasAuth="'charge-station-synchro'">同步数据</Button>
+            </li>
           </ul>
         </TabPane>
       </Tabs>
@@ -41,7 +44,7 @@
 <script>
 import chargeStationList from "./components/charge-station-list/index.vue";
 import chargeStationMap from "./components/charge-station-map.vue";
-import { axiosAllSupplier } from "@/api/charge.js";
+import { axiosAllSupplier,axiosSynStationData } from "@/api/charge.js";
 import { tabObj,supplierList } from "./fields";
 export default {
   components: {
@@ -71,6 +74,17 @@ export default {
     this.getSupplierList(this.$route.query.id)
   },
   methods: {
+    // 从供应商拉取最新数据
+    synStationData() {
+      axiosSynStationData({ supplierId: tabObj.tabVal }).then(res => {
+        let status = res.data.data.status;
+        if (status == "1") {
+          this.$Message.success("已请求同步，请稍后刷新查看");
+        } else {
+          this.$Message.error("同步数据失败");
+        }
+      });
+    },
     getSupplierList(queryId) {
       axiosAllSupplier({ status: 1 }).then(res => {
         this.supplierList = res.data.data || [];

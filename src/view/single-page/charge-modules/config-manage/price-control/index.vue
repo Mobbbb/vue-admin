@@ -90,8 +90,8 @@
           />
           <span class="left15">元/度</span>
         </FormItem>
-        <FormItem label="T3单价 : ">
-          <span class="total-price">{{t3Price}}</span>
+        <FormItem label="单价 : ">
+          <span class="total-price">{{ownPrice}}</span>
           <span class="left15">元/度</span>
         </FormItem>
         <FormItem label="启用时间 : " prop="startTime">
@@ -173,7 +173,7 @@ export default {
     });
   },
   computed: {
-    t3Price() {
+    ownPrice() {
       return (
         (
           Number(this.addPriceParams.chargingPrice) +
@@ -231,8 +231,15 @@ export default {
     },
     // 保留小数点后2位
     formatVal(key) {
-      let val = this.addPriceParams[key].toFixed(2);
-      this.$set(this.addPriceParams, key, val);
+      let inputVal = this.addPriceParams[key]
+      if(Number(inputVal)<0){
+        this.$set(this.addPriceParams, key, '0.00');
+        return false
+      }else if(inputVal || inputVal===0){
+        let val = inputVal.toFixed(2);
+        this.$set(this.addPriceParams, key, val);
+      }
+      
     },
     // 选择时间将格式化时间赋值给对应变量
     getStartTime(formVal) {
@@ -268,8 +275,8 @@ export default {
             city.cityName === params.cityName && (params.cityId = city.cityId);
           });
 
-          // 计算T3单价，电费+服务费
-          params.price = this.t3Price;
+          // 计算单价，电费+服务费
+          params.price = this.ownPrice;
           !params.startTime && (params.startTime = this.startTime);
           // 如果是编辑，调用编辑
           if (this.editorModal) {

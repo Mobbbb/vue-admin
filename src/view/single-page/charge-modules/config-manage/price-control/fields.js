@@ -25,7 +25,7 @@ export const returnFields = (that) => {
       minWidth: 120
     },
     price: {
-      title: 'T3单价(元/度)',
+      title: '单价(元/度)',
       key: 'price',
       ellipsis: true,
       tooltip: true,
@@ -134,7 +134,7 @@ export const returnFields = (that) => {
             click: () => {
               that.$Modal.confirm({
                 title: Number(params.row.status) === 2 ? '确认停用此定价' : '确认启用此定价',
-                content: `<div>城市：${params.row.cityName}</div><div>品牌：${params.row.brandName}</div><div>电费：${params.row.chargingPrice} 元/度</div><div>服务费：${params.row.servicePrice} 元/度</div><div>T3单价：${params.row.price} 元/度</div><div>启用时间：${params.row.startTime}</div>`,
+                content: `<div>城市：${params.row.cityName}</div><div>品牌：${params.row.brandName}</div><div>电费：${params.row.chargingPrice} 元/度</div><div>服务费：${params.row.servicePrice} 元/度</div><div>单价：${params.row.price} 元/度</div><div>启用时间：${params.row.startTime}</div>`,
                 onOk: () => {
                   let param = {
                     uuid: params.row.uuid,

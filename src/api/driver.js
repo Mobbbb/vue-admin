@@ -285,6 +285,14 @@ export const unblocking = (data) => {
     method: 'post'
   })
 }
+/** 冻结解冻 */
+export const freezeAndUnfreeze = (data) => {
+  return axios.request({
+    url: '/admin/driver/freezeAndUnfreeze',
+    data,
+    method: 'post'
+  })
+}
 /** 移出黑名单 */
 export const removeFromBlacklist = (data) => {
   return axios.request({
@@ -370,11 +378,27 @@ export const attendanceDetailList = (data) => {
   })
 }
 
+// 考勤规则历史版本
+export const getRevisionList = (data) => {
+  return axios.request({
+    url: '/admin/driver/examine/rule/historicVersion',
+    data,
+    method: 'POST'
+  })
+}
 
-/** 日考勤管理 */ 
+/** 日月考勤版本详细信息 */ 
 export const attendanceDayList = (data) => {
   return axios.request({
     url: '/admin/driver/examine/list',
+    data,
+    method: 'POST'
+  })
+}
+/** 日考勤管理 */ 
+export const axiosExamineInfo = (data) => {
+  return axios.request({
+    url: '/admin/driver/examine/rule/ruleInfo',
     data,
     method: 'POST'
   })
@@ -391,6 +415,14 @@ export const attendanceRuleList = (data) => {
 export const addAttendanceRule = (data) => {
   return axios.request({
     url: '/admin/driver/examine/rule/add',
+    data,
+    method: 'POST'
+  })
+}
+/** 编辑考勤规则 */ 
+export const editAttendanceRule = (data) => {
+  return axios.request({
+    url: '/admin/driver/examine/rule/edit',
     data,
     method: 'POST'
   })
@@ -448,31 +480,6 @@ export const deleteProblemTag = (data) => {
 export const addProblemTag = (data) => {
   return axios.request({
     url: '/admin/driver/addFeedbackProblemTag',
-    data,
-    method: 'POST'
-  })
-}
-
-/** 短信管理 */
-export const shortMsgList = (data) => {
-  return axios.request({
-    url: '/admin/sms/queryPage',
-    data,
-    method: 'POST'
-  })
-}
-/** 发送短信 */
-export const sendMsg = (params, data) => {
-  return axios.request({
-    url: `/admin/sms/${params}`,//insertExcel sendSms
-    data,
-    method: 'POST'
-  })
-}
-/** 短信详情 */
-export const viewMsgDetail = (data) => {
-  return axios.request({
-    url: '/admin/sms/detail',
     data,
     method: 'POST'
   })

@@ -1,11 +1,11 @@
 <template>
     <div class="passenger">
         <searchList :inputList="inputList" @on-search="search" @on-reset="reset"></searchList>
-        <TableConfig
+        <!--<TableConfig
             @on-confirm="changeTableColumn"
             v-model="selectColumns"
             :customList="columns">
-        </TableConfig>
+        </TableConfig>-->
 		<VTable 
             :total="total"
             :current="currPage"

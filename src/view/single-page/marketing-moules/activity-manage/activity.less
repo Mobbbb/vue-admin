@@ -1,0 +1,106 @@
+// 优惠券整个
+.coupon-list {
+  min-width: 1150px;
+  max-width: 1430px;
+  .coupon-right{
+    /deep/ .ivu-form-item,
+    /deep/ .ivu-form-item-content {
+      display: inline-block;
+    }
+    /deep/ .ivu-form-item-label {
+      padding-right: 0;
+    }
+  }
+  /deep/ .ivu-form-item {
+    margin: 0 20px 20px 0;
+  }
+  
+}
+.coupon-item {
+  border: 1px solid #cccdd1;
+  border-radius: 2px;
+  position: relative;
+  padding: 20px 22px 5px 22px;
+  margin-bottom: 20px;
+  display: flex;
+  &:hover {
+    box-shadow: 0px 2px 5px #cccdd1;
+  }
+}
+// 优惠券序列
+.index-num {
+  position: absolute;
+  left: -24px;
+  top: -2px;
+}
+.close-icon {
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  cursor: pointer;
+}
+// 优惠券图形
+.coupon-left {
+  border: 1px solid #e8eaec;
+  min-width: 340px;
+  width: 340px;
+  height: 120px;
+  box-shadow: 0 0 5px #e8eaec;
+  text-align: center;
+  margin: auto;
+  position: relative;
+  top: -6px;
+  .small-left {
+    border-right: 1px solid #e8eaec;
+    width: 100px;
+    height: 100%;
+    float: left;
+    padding-top: 35px;
+    p {
+      margin-bottom: 10px;
+    }
+  }
+  .small-right {
+    margin-left: 100px;
+    height: 100%;
+    position: relative;
+    padding: 40px 8px 0 8px;
+    .coupon-icon {
+      border-bottom: 1px solid #dcdee2;
+      border-left: 1px solid #dcdee2;
+      display: inline-block;
+      padding: 3px 3px 4px 4px;
+      line-height: 14px;
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+    /deep/ .ivu-input.ivu-input-small {
+      border: 1px solid #dcdee2;
+      &:focus {
+        border-color: #57a3f3;
+        box-shadow: 0 0 0 2px rgba(45, 140, 240, 0.2);
+      }
+      &:hover {
+        border-color: #57a3f3;
+      }
+    }
+  }
+  .coupon-name {
+    font-size: 16px;
+    line-height: 28px;
+    cursor: pointer;
+  }
+}
+// 编辑优惠券
+.coupon-right {
+  flex-grow: 1;
+  padding-left: 20px;
+  min-height: 120px;
+}
+.top-move {
+  position: relative;
+  top: -1px;
+  right: -2px;
+}
+// 优惠券结束

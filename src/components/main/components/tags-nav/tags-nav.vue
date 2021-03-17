@@ -46,6 +46,7 @@
 </template>
 
 <script>
+import {mapState} from 'vuex';
 import { showTitle, routeEqual } from '@/libs/util'
 import beforeClose from '@/router/before-close'
 export default {
@@ -77,7 +78,12 @@ export default {
     currentRouteObj () {
       const { name, params, query } = this.value
       return { name, params, query }
-    }
+    },
+    // 用于其他页面主动关闭tab标签
+    ...mapState({
+      changeTab: state => state.common.changeTab,
+      closeTabInfo: state => state.common.closeTabInfo
+    })
   },
   methods: {
     handlescroll (e) {
@@ -105,7 +111,7 @@ export default {
         }
       }
     },
-    handleTagsOption (type) {
+    handleTagsOption (type) { // 右键 关闭所有/关闭其他
       if (type.includes('all')) {
         // 关闭所有，除了home
         let res = this.list.filter(item => item.name === this.$config.homeName)
@@ -119,7 +125,8 @@ export default {
         }, 100)
       }
     },
-    handleClose (current) {
+    handleClose (current) { // 左键 关闭
+      this.$store.commit('switchCacheState', [current.name, true])
       if (current.meta && current.meta.beforeCloseName && current.meta.beforeCloseName in beforeClose) {
         new Promise(beforeClose[current.meta.beforeCloseName]).then(close => {
           if (close) {
@@ -129,6 +136,7 @@ export default {
       } else {
         this.close(current)
       }
+
     },
     close (route) {
       let res = this.list.filter(item => !routeEqual(route, item))
@@ -192,6 +200,13 @@ export default {
         document.body.addEventListener('click', this.closeMenu)
       } else {
         document.body.removeEventListener('click', this.closeMenu)
+      }
+    },
+    changeTab(){
+      if(this.closeTabInfo){
+        let obj = {...this.closeTabInfo}
+        this.$store.commit('clearCloseTabInfo')
+        this.handleClose(obj)
       }
     }
   },

@@ -89,3 +89,83 @@ export const changePaywayStatus = (data) => {
     method: 'post'
   })
 }
+
+// 财务日对账 -- 对账列表
+export const channelList = () => {
+  return axios.request({
+    url: '/admin/finance/bill/channelList',
+    method: 'post'
+  })
+}
+
+// 对账历史清单
+export const historyList = (data) => {
+  return axios.request({
+    url: '/admin/finance/bill/historyList',
+    data,
+    method: 'post'
+  })
+}
+
+// 创建新账单日
+export const addBillDay = (data) => {
+  return axios.request({
+    url: '/admin/finance/bill/addBillDay',
+    data,
+    method: 'post'
+  })
+}
+
+// 历史对账清单备忘
+export const addMemo = (data) => {
+  return axios.request({
+    url: '/admin/finance/bill/addMemo',
+    data,
+    method: 'post'
+  })
+}
+
+// 历史对账清单处理
+export const deal = (data) => {
+  return axios.request({
+    url: '/admin/finance/bill/deal',
+    data,
+    method: 'post'
+  })
+}
+
+// 差异信息
+export const diffInfo = (data) => {
+  return axios.request({
+    url: '/admin/finance/bill/diffInfo',
+    data,
+    method: 'post'
+  })
+}
+
+// 历史结果差异数据
+export const platformDiffInfo = (data) => {
+  return axios.request({
+    url: '/admin/finance/bill/platformDiffInfo',
+    data,
+    method: 'post'
+  })
+}
+
+// 删除支付方式
+export const deletePayway = (data) => {
+  return axios.request({
+    url: '/admin/Strategy/payway/delete',
+    data,
+    method: 'post'
+  })
+}
+
+// 新建支付方式
+export const addPayway = (data) => {
+  return axios.request({
+    url: '/admin/Strategy/payway/add',
+    data,
+    method: 'post'
+  })
+}

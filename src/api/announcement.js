@@ -1,5 +1,5 @@
 /**
- * 消息中心-公告、push 接口
+ * 消息中心
  */
 
 import axios from '@/libs/api.request'
@@ -57,6 +57,7 @@ export const addPush = (data) => {
     data: data
   })
 }
+
 //放弃推送
 export const cancelPush  = (data) => {
   return axios.request({
@@ -108,5 +109,49 @@ export const deleteImItem = (data) => {
     url: '/admin/system/imTemplet/del',
     method: 'post',
     data: data
+  })
+}
+
+/*
+* 新建发送短信任务
+*/
+export const sendMessage = (data) => {
+  return axios.request({
+    url: '/admin/sms/saveAndSend',
+    method: 'post',
+    data
+  })
+}
+
+/*
+* 发送短信任务详情
+*/
+export const messageDetail = (data) => {
+  return axios.request({
+    url: '/admin/sms/smsDetail',
+    method: 'post',
+    data
+  })
+}
+
+/*
+* 发送短信任务列表
+*/
+export const shortMsgList = (data) => {
+  return axios.request({
+    url: '/admin/sms/listQuery',
+    data,
+    method: 'POST'
+  })
+}
+
+/*
+* 远程搜索用户群列表
+*/
+export const getUserGroupList = (data) => {
+  return axios.request({
+    url: '/admin/userGroup/list',
+    data,
+    method: 'POST'
   })
 }
