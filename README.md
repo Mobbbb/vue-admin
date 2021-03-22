@@ -15,7 +15,7 @@
 		└── v-upload                   上传图片组件
 	├── config         开发相关配置
 	└── view           配置请求IP及主页等
-    ├── components   业务组件
+	  ├── components   业务组件
 	  ├── error-page   报错之后跳转页面
 	  ├── login        登陆页面
 	  ├── single-page  业务相关页面
