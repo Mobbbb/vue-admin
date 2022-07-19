@@ -24,7 +24,8 @@ import ElementLocale from 'element-ui/lib/locale'
 
 // 实际打包时应该不引入mock,
 /* eslint-disable */
-if (process.env.NODE_ENV !== 'production') require('@/mock')
+// if (process.env.NODE_ENV !== 'production') require('@/mock')
+require('@/mock')
 
 /**
  * @description 注册admin内置插件
